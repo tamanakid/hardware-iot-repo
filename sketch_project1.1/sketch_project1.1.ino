@@ -42,6 +42,11 @@ void loop() {
 void onReadLightSensor() {  
   light = analogRead(PIN_EXT_LIGHT_SENSOR);
 
+  /* Debugging */
+  char *buffer = (char*) malloc(12*sizeof(char));
+  sprintf(buffer, "Light: %d", light);
+  Serial.println(buffer);
+
   int writeBar0 = (light > (LIGHT_SENSOR_RANGE/LIGHT_SENSOR_STEPS)*0.5 + LIGHT_SENSOR_NOISE) ? 1 : 0;
   int writeBar1 = (light > (LIGHT_SENSOR_RANGE/LIGHT_SENSOR_STEPS)*1.5 + LIGHT_SENSOR_NOISE) ? 1 : 0;
   int writeBar2 = (light > (LIGHT_SENSOR_RANGE/LIGHT_SENSOR_STEPS)*2.5 + LIGHT_SENSOR_NOISE) ? 1 : 0;

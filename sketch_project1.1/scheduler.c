@@ -1,29 +1,8 @@
-
-/*
-#ifndef _SCHEDULER_H
-#define _SCHEDULER_H
-#endif
-*/
-#include <stdbool.h>
 #include <stddef.h>
-
-
-#define MAX_CONCURRENT_TASKS 10
-
-
-typedef void (*taskCallback)(void);
-
-typedef struct {
-  int schedule_ticks;
-  taskCallback callback;
-  bool is_active;
-  int remaining_ticks;
-} schedulerTask;
-
+#include "scheduler.h"
 
 
 schedulerTask tasks[MAX_CONCURRENT_TASKS];
-
 
 
 /**
