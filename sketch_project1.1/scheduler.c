@@ -29,6 +29,29 @@ schedulerTask *scheduler_add (int schedule_ticks, taskCallback callback, bool is
 
 
 /**
+ * @brief activates a task to be run by scheduler (could be done directly in pointer)
+ * @param task - task to activate
+ */
+void scheduler_activate(schedulerTask *task) {
+  if (!task->is_active) {
+    task->is_active = true;
+  }
+}
+
+
+/**
+ * @brief deactivates a task to avoid being run by scheduler (could be done directly in pointer)
+ * @param task - task to deactivate
+ */
+void scheduler_deactivate(schedulerTask *task) {
+  if (task->is_active) {
+    task->is_active = false;
+  }
+}
+
+
+
+/**
  * @brief iterates over tasks array and executes active callbacks
  */
 void scheduler_run () {

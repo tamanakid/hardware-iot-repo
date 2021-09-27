@@ -1,3 +1,6 @@
+#ifndef _HARDWARE_H
+#define _HARDWARE_H
+
 #define PIN_EXT_LIGHT_SENSOR			2
 #define PIN_EXT_BUZZER						A3
 #define PIN_EXT_BUTTON						4
@@ -34,3 +37,5 @@
 #define BUZZER_NOTE_AS5 932
 #define BUZZER_NOTE_B5 988
 #define BUZZER_NOTE_C6 1047
+
+#endif // _HARDWARE_H
