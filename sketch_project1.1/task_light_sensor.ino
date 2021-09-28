@@ -6,7 +6,7 @@
 
 /* Extern variables */
 
-extern t_state state;
+extern t_global_state state;
 
 
 /* Constants */
@@ -39,11 +39,9 @@ t_light_step light_steps[LIGHT_SENSOR_STEPS] = {
 
 /* Task: Light sensor */
 
-// int light = 0;
+int light = 0;
 
-void taskLightSensor() {
-  static int light = 0;
-  
+void taskLightSensor() {  
   light = analogRead(PIN_EXT_LIGHT_SENSOR);
 
   /* Debugging */
@@ -62,5 +60,13 @@ void taskLightSensor() {
     if (LIGHT_SENSOR_THRESHOLD_STEP == i) {
       state.is_overlit = (is_step_active) ? true : false;
     }
+  }
+}
+
+
+void onResetLightSensor() {
+  for (int i = 0; i < LIGHT_SENSOR_STEPS; i++) {
+    t_light_step stp = light_steps[i];
+    digitalWrite(stp.pin_led_bar, 0);
   }
 }

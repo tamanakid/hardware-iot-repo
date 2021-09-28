@@ -6,10 +6,9 @@
 
 /* Global declarations */
 
-t_state state = {
+t_global_state state = {
   is_overlit: false,
-  is_alarm: false,
-  is_sleep: false,
+  scheduler_state: STATE_NORMAL,
   seconds_overlit: 0,
   seconds_sleep: 0
 };
@@ -50,4 +49,44 @@ void setup() {
 void loop() {
   scheduler_run();
   delay(100);
+}
+
+
+
+void setSchedulerState (t_scheduler_state new_state) {
+
+  if (state.scheduler_state == new_state) {
+    return;
+  }
+  
+  switch (new_state) {
+    case STATE_NORMAL:
+      scheduler_activate(task_light_sensor);
+      scheduler_deactivate(task_green_led_blink);
+      onResetGreenLEDBlink();
+      break;
+      
+    case STATE_GREEN_LED:
+      scheduler_activate(task_green_led_blink);
+      break;
+      
+    case STATE_ALARM:
+      scheduler_activate(task_alarm_handler);
+      scheduler_deactivate(task_timers_tick);
+      scheduler_deactivate(task_green_led_blink);
+      onResetGreenLEDBlink();
+      break;
+      
+    case STATE_SLEEP:
+      scheduler_activate(task_timers_tick);
+      scheduler_deactivate(task_light_sensor);
+      scheduler_deactivate(task_green_led_blink);
+      scheduler_deactivate(task_alarm_handler);
+      onResetLightSensor();
+      onResetAlarmHandler();
+      break;
+      
+  }
+  
+  state.scheduler_state = new_state;
 }
