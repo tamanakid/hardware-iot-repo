@@ -28,4 +28,5 @@ typedef struct {
 
   }
 #endif
+
 #endif // _SCHEDULER_H

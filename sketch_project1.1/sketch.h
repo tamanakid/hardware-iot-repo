@@ -34,21 +34,17 @@ typedef struct {
 } t_global_state;
 
 
-#ifdef __cplusplus
-  extern "C" {    
-    /* Function declarations */
-    void setSchedulerState(t_scheduler_state new_state);
-    
-    void taskLightSensor(void);
-    void taskGreenLEDBlink(void);
-    void taskAlarmHandler(void);
-    void taskTimersTick(void);
+/* Function declarations */
+void setSchedulerState(t_scheduler_state new_state);
 
-    void onResetLightSensor(void);
-    void onResetGreenLEDBlink(void);
-    void onResetAlarmHandler(void);
-  }
-#endif
+void taskLightSensor(void);
+void taskGreenLEDBlink(void);
+void taskAlarmHandler(void);
+void taskTimersTick(void);
+
+void onResetLightSensor(void);
+void onResetGreenLEDBlink(void);
+void onResetAlarmHandler(void);
     
     
 /* Task reference variables */
