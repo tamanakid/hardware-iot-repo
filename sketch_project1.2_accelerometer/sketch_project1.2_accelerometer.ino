@@ -38,21 +38,25 @@ void loop() {
     x_diff[j] = x_reg[0] - x_reg[j + 1];
     y_diff[j] = y_reg[0] - y_reg[j + 1];
     z_diff[j] = z_reg[0] - z_reg[j + 1];
-    /*
-    Serial.print(200*(j+1));
-    Serial.print(" ms diff");
-    Serial.print(" - x: ");
-    Serial.print(x_diff[j]);
-    Serial.print(" - y: ");
-    Serial.print(y_diff[j]);
-    Serial.print(" - z: ");
-    Serial.println(z_diff[j]);
-    */
 
-    if (y_diff[j] < -50 && z_diff[j] > 50) {
+    if (x_diff[j] > 10 || y_diff[j] > 10 || z_diff[j] > 10) {
+      Serial.print(200*(j+1));
+      Serial.print(" ms diff");
+      Serial.print(" - x: ");
+      Serial.print(x_diff[j]);
+      Serial.print(" - y: ");
+      Serial.print(y_diff[j]);
+      Serial.print(" - z: ");
+      Serial.println(z_diff[j]);
+    }
+    
+
+    if (y_diff[j] < -50) { // && z_diff[j] > 50
       Serial.print("ON - Wrist movement detected");
       Serial.print(" - Latency: ");
       Serial.print(200*(j+1));
+      Serial.print(" - X: ");
+      Serial.print(x_diff[j]);
       Serial.print(" - Y: ");
       Serial.print(y_diff[j]);
       Serial.print(" - Z: ");
@@ -60,10 +64,12 @@ void loop() {
       break;
     }
 
-    if (y_diff[j] > 50 && z_diff[j] < -50) {
+    if (y_diff[j] > 50) { // && z_diff[j] < -50
       Serial.print("OFF - Wrist movement detected");
       Serial.print(" - Latency: ");
       Serial.print(200*(j+1));
+      Serial.print(" - X: ");
+      Serial.print(x_diff[j]);
       Serial.print(" - Y: ");
       Serial.print(y_diff[j]);
       Serial.print(" - Z: ");
