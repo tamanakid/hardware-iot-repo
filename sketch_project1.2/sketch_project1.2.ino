@@ -66,7 +66,6 @@ void setSchedulerState (t_state_action action) {
     case ACTION_WRIST_DEACTIVATE:
       Serial.println(">> State Change: Wrist Deactivated");
       state.is_wrist_active = false;
-      scheduler_deactivate(task_light_sensor);
       onResetLightSensor();
       break;
       
