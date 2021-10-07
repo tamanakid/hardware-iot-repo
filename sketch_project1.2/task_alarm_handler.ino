@@ -28,7 +28,7 @@ void taskAlarmHandler() {
   int buttonState = digitalRead(PIN_EXT_BUTTON);
 
   if (buttonState == LOW) {    
-    setSchedulerState(RDX_ALARM_SLEEP);
+    setSchedulerState(ACTION_ALARM_SLEEP);
   }
 }
 

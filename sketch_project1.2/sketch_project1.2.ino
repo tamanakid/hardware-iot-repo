@@ -1,3 +1,5 @@
+/* Library Dependencies */
+
 #include "hardware.h"
 #include "scheduler.h"
 
@@ -9,7 +11,7 @@
 t_global_state state = {
   is_overlit: false,
   is_wrist_active: false,
-  alarm_state: ALARM_OFF,
+  alarm_state: ALARM_STANDBY,
   seconds_overlit: 0,
   seconds_sleep: 0
 };
@@ -37,6 +39,7 @@ void setup() {
 }
 
 
+/* Loop function */
 
 void loop() {
   scheduler_run();
@@ -44,41 +47,42 @@ void loop() {
 }
 
 
+/* State setter function */
 
-void setSchedulerState (t_reducer_action action) {
-  static t_reducer_action last_action = RDX_WRIST_DEACTIVATE;
+void setSchedulerState (t_state_action action) {
+  static t_state_action last_action = ACTION_WRIST_DEACTIVATE;
 
   if (last_action == action) {
     return;
   }
   
   switch (action) {
-    case RDX_WRIST_ACTIVATE:
+    case ACTION_WRIST_ACTIVATE:
       Serial.println(">> State Change: Wrist Activated");
       state.is_wrist_active = true;
       scheduler_activate(task_light_sensor);
       break;
 
-    case RDX_WRIST_DEACTIVATE:
+    case ACTION_WRIST_DEACTIVATE:
       Serial.println(">> State Change: Wrist Deactivated");
       state.is_wrist_active = false;
       scheduler_deactivate(task_light_sensor);
       onResetLightSensor();
       break;
       
-    case RDX_GREEN_LED_ON:
+    case ACTION_GREEN_LED_ON:
       Serial.println(">> State Change: Alarm on Green LED blinking");
       scheduler_activate(task_green_led_blink);
       break;
       
-    case RDX_ALARM_ON:
+    case ACTION_ALARM_ON:
       Serial.println(">> State Change: Alarm Activated");
       state.alarm_state = ALARM_ON;
       scheduler_activate(task_alarm_handler);
       scheduler_deactivate(task_timers_tick);
       break;
       
-    case RDX_ALARM_SLEEP:
+    case ACTION_ALARM_SLEEP:
       Serial.println(">> State Change: Alarm on Sleep Mode");
       state.alarm_state = ALARM_SLEEP;
       scheduler_activate(task_timers_tick);
@@ -90,9 +94,9 @@ void setSchedulerState (t_reducer_action action) {
       onResetAlarmHandler();
       break;
 
-    case RDX_ALARM_RESET:
+    case ACTION_ALARM_STANDBY:
       Serial.println(">> State Change: Alarm on Standby");
-      state.alarm_state = ALARM_OFF;
+      state.alarm_state = ALARM_STANDBY;
       scheduler_activate(task_light_sensor);
       scheduler_deactivate(task_green_led_blink);
       onResetGreenLEDBlink();
