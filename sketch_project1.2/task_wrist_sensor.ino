@@ -31,7 +31,7 @@ void taskWristSensor () {
     z_diff[j] = z_reg[0] - z_reg[j + 1];
     // debug(j, x_diff[j], y_diff[j], z_diff[j]);
 
-    if (y_diff[j] < -50) { //  && z_diff[j] > 50
+    if (y_diff[j] < -80) { //  && z_diff[j] > 50
       Serial.println("Wrist movement detected to turn ON...");
       if (state.alarm_state != ALARM_SLEEP) {
         setSchedulerState(ACTION_WRIST_ACTIVATE);
@@ -39,7 +39,7 @@ void taskWristSensor () {
       break;
     }
 
-    if (y_diff[j] > 50) { // && z_diff[j] < -50
+    if (y_diff[j] > 80) { // && z_diff[j] < -50
       Serial.println("Wrist movement detected to turn OFF...");
       if (state.alarm_state != ALARM_SLEEP) {
         setSchedulerState(ACTION_WRIST_DEACTIVATE);

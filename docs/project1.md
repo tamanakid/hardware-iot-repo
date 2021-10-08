@@ -176,7 +176,8 @@ Ambos proyectos se componen de los siguientes elementos:
 
 ## Referencias
 
-
+* **[Repositorio](https://github.com/tamanakid/hardware-iot-repo)**
+* **[Manejo del Buzzer: Documentación de Lilypad](https://learn.sparkfun.com/tutorials/lilypad-protosnap-plus-activity-guide/5-play-a-tune)**
 * **[Datasheet: Acelerómetro ADXL-335](https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL335.pdf)**
 * **[Estudio e implementación de un ADC/DAC Sigma-Delta](https://core.ac.uk/download/pdf/46111717.pdf#page=25)** - Conversión A/D: Cuantificación por truncamiento o redondeo (p.10, sección 2.2.2.1 - Error de cuantificación)
 
