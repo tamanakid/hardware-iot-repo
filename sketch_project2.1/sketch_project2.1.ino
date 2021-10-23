@@ -21,15 +21,14 @@ void setup() {
   setupWifiConnect();
   setupBuzzer();
   setupLightSensor();
-  setupLEDTest();
+  // setupLEDTest();
   setupWebServer();
 
-  task_wifi_connect = scheduler_add(10, &taskWifiConnect, true);
+  task_wifi_connect = scheduler_add(5, &taskWifiConnect, true);
   task_buzzer = scheduler_add(10, &taskBuzzer, false);
   task_light_sensor = scheduler_add(10, &taskLightSensor, false);
-  task_led_test = scheduler_add(2, &taskLEDTest, false);
+  // task_led_test = scheduler_add(2, &taskLEDTest, false);
   task_web_server = scheduler_add(1, &taskWebServer, false);
-  
 }
 
 
@@ -51,7 +50,7 @@ void setSchedulerState (t_state_action action) {
       Serial.println(">> Action: Connected");
       scheduler_activate(task_buzzer);
       scheduler_activate(task_light_sensor);
-      scheduler_activate(task_led_test);
+      // scheduler_activate(task_led_test);
       scheduler_activate(task_web_server);
       break;
 
@@ -59,11 +58,11 @@ void setSchedulerState (t_state_action action) {
       Serial.println(">> Action: Disconnected");
       scheduler_deactivate(task_buzzer);
       scheduler_deactivate(task_light_sensor);
-      scheduler_deactivate(task_led_test);
+      // scheduler_deactivate(task_led_test);
       scheduler_deactivate(task_web_server);
       resetBuzzer();
       resetLightSensor();
-      resetLEDTest();
+      // resetLEDTest();
       resetWebServer();
       break;
 
