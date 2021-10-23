@@ -4,6 +4,7 @@
 // Library dependencies
 
 #include <Arduino.h>
+#include <ESP8266WebServer.h>
 #include "scheduler.h"
 
 
@@ -16,7 +17,8 @@
 // Type definitions
 
 enum e_state_action {
-  ACTION_BUZZER_ACTIVATE,
+  ACTION_ON_CONNECTED,
+  ACTION_ON_DISCONNECTED,
   ACTION_BUZZER_DEACTIVATE,
 };
 
@@ -31,14 +33,17 @@ enum e_alarm_state {
 
 typedef e_alarm_state t_alarm_state;
 
+*/
+
 typedef struct {
   bool is_overlit;
-  bool is_wrist_active;
-  t_alarm_state alarm_state;
-  float seconds_overlit;
-  float seconds_sleep;
+  int light;
+  // bool is_wrist_active;
+  // t_alarm_state alarm_state;
+  // float seconds_overlit;
+  // float seconds_sleep;
 } t_global_state;
-*/
+
 
 
 // Function declarations
@@ -46,18 +51,28 @@ void setSchedulerState(t_state_action action);
 
 void setupWifiConnect(void);
 void setupBuzzer(void);
+void setupLightSensor(void);
+void setupLEDTest(void);
+void setupWebServer(void);
 
 void taskWifiConnect(void);
 void taskBuzzer(void);
+void taskLightSensor(void);
+void taskLEDTest(void);
+void taskWebServer(void);
 
 void resetWifiConnect(void);
 void resetBuzzer(void);
+void resetLightSensor(void);
+void resetLEDTest(void);
+void resetWebServer(void);
 
 /* Global reference variables */
 
-extern schedulerTask *task_wifi_connect, *task_buzzer;
+extern schedulerTask *task_wifi_connect, *task_buzzer, *task_light_sensor, *task_led_test, *task_web_server;
 
-// extern t_global_state state;
+extern ESP8266WebServer server;
+extern t_global_state state;
 
 
 #endif // _SKETCH_H

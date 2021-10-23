@@ -22,7 +22,7 @@ t_buzzer_status buzzer_status = SLEEP;
 
 
 void setupBuzzer () {
-  pinMode(MINID1_PIN_D1, OUTPUT);
+  pinMode(MINID1_PIN_D2, OUTPUT);
 }
 
 
@@ -31,7 +31,7 @@ void taskBuzzer() {
     // Serial.println("task:Buzzer> SLEEP->ON");
     
     buzzer_status = ON;
-    tone(MINID1_PIN_D1, BUZZER_NOTE_GS5);
+    tone(MINID1_PIN_D2, BUZZER_NOTE_GS5);
   }
 
   else if (buzzer_status == ON) {
@@ -45,7 +45,7 @@ void taskBuzzer() {
     } else {
       buzzer_status = OFF;
     }
-    noTone(MINID1_PIN_D1);
+    noTone(MINID1_PIN_D2);
   }
 
   else if (buzzer_status == OFF) {
@@ -54,7 +54,7 @@ void taskBuzzer() {
       
       seconds = 0;
       buzzer_status = ON;
-      tone(MINID1_PIN_D1, BUZZER_NOTE_G5);
+      tone(MINID1_PIN_D2, BUZZER_NOTE_G5);
     } else {
       seconds++;
     }
@@ -66,5 +66,5 @@ void resetBuzzer() {
   // Serial.println("task:Buzzer> SLEEP");
   
   buzzer_status = SLEEP;
-  noTone(MINID1_PIN_D1);
+  noTone(MINID1_PIN_D2);
 }

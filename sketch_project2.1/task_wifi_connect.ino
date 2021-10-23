@@ -1,15 +1,22 @@
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 
+#include "hardware.h"
 #include "hardware_d1mini.h"
 #include "sketch.h"
 
+
+
+extern t_global_state state;
 
 
 int last_status;
 
 unsigned int udp_port = 80;
 WiFiUDP Udp;
+
+ESP8266WebServer server = ESP8266WebServer(udp_port);
 
 
 void setupWifiConnect () {
@@ -38,7 +45,7 @@ void taskWifiConnect() {
         Udp.begin(udp_port);
 
         digitalWrite(MINID1_PIN_D4, LOW);
-        setSchedulerState(ACTION_BUZZER_ACTIVATE);
+        setSchedulerState(ACTION_ON_CONNECTED);
         break;
 
       case WL_CONNECT_FAILED:
@@ -49,10 +56,14 @@ void taskWifiConnect() {
         Serial.println("task:WifiConnect> Disconnected from Access Point.");
         
         digitalWrite(MINID1_PIN_D4, HIGH);
-        setSchedulerState(ACTION_BUZZER_DEACTIVATE);
+        setSchedulerState(ACTION_ON_DISCONNECTED);
         break;
     }
   }
 
   last_status = status;
+}
+
+void resetWifiConnect() {
+  
 }

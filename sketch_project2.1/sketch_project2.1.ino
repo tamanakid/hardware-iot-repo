@@ -11,7 +11,8 @@
 #define STAPSK  "password"
 #endif
 
-schedulerTask *task_wifi_connect, *task_buzzer;
+t_global_state state;
+schedulerTask *task_wifi_connect, *task_buzzer, *task_light_sensor, *task_led_test, *task_web_server;
 
 
 void setup() {
@@ -19,9 +20,15 @@ void setup() {
   
   setupWifiConnect();
   setupBuzzer();
+  setupLightSensor();
+  setupLEDTest();
+  setupWebServer();
 
   task_wifi_connect = scheduler_add(10, &taskWifiConnect, true);
   task_buzzer = scheduler_add(10, &taskBuzzer, false);
+  task_light_sensor = scheduler_add(10, &taskLightSensor, false);
+  task_led_test = scheduler_add(2, &taskLEDTest, false);
+  task_web_server = scheduler_add(1, &taskWebServer, false);
   
 }
 
@@ -40,13 +47,28 @@ void setSchedulerState (t_state_action action) {
   }
   
   switch (action) {
-    case ACTION_BUZZER_ACTIVATE:
-      Serial.println(">> State Change: Buzzer Activated");
+    case ACTION_ON_CONNECTED:
+      Serial.println(">> Action: Connected");
       scheduler_activate(task_buzzer);
+      scheduler_activate(task_light_sensor);
+      scheduler_activate(task_led_test);
+      scheduler_activate(task_web_server);
+      break;
+
+    case ACTION_ON_DISCONNECTED:
+      Serial.println(">> Action: Disconnected");
+      scheduler_deactivate(task_buzzer);
+      scheduler_deactivate(task_light_sensor);
+      scheduler_deactivate(task_led_test);
+      scheduler_deactivate(task_web_server);
+      resetBuzzer();
+      resetLightSensor();
+      resetLEDTest();
+      resetWebServer();
       break;
 
     case ACTION_BUZZER_DEACTIVATE:
-      Serial.println(">> State Change: Buzzer Deactivated");
+      Serial.println(">> Action: Buzzer Deactivated");
       scheduler_deactivate(task_buzzer);
       resetBuzzer();
       break;
