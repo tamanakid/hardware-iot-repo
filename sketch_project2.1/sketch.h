@@ -37,11 +37,8 @@ typedef e_alarm_state t_alarm_state;
 
 typedef struct {
   bool is_overlit;
+  bool is_server_active;
   int light;
-  // bool is_wrist_active;
-  // t_alarm_state alarm_state;
-  // float seconds_overlit;
-  // float seconds_sleep;
 } t_global_state;
 
 

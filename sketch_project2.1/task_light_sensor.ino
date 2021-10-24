@@ -7,21 +7,12 @@
 
 // TODO: Likely needs not be a task, but merely functionality within the web server
 
-/* Extern variables */
-
 extern t_global_state state;
-
-
-/* Constants */
 
 #define LIGHT_SENSOR_NOISE 20
 #define LIGHT_SENSOR_RANGE (1020 - LIGHT_SENSOR_NOISE)
 #define LIGHT_SENSOR_THRESHOLD 500
 
-
-/* Task: Light sensor */
-
-int light = 0;
 
 
 void setupLightSensor () {
@@ -30,13 +21,15 @@ void setupLightSensor () {
 
 
 void taskLightSensor() {  
-  light = analogRead(MINID1_PIN_A0);
-  state.light = light;
+  state.light = analogRead(MINID1_PIN_A0);
 
-  if (light > LIGHT_SENSOR_THRESHOLD) {
+  if (state.light > LIGHT_SENSOR_THRESHOLD) {
     state.is_overlit = true;
   } else {
     state.is_overlit = false;
+    if (state.is_server_active) {
+      digitalWrite(MINID1_PIN_D0, LOW);
+    }
   }
 
   /* Debugging */

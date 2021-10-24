@@ -11,7 +11,12 @@
 #define STAPSK  "password"
 #endif
 
-t_global_state state;
+t_global_state state = {
+  is_overlit: false,
+  is_server_active: false,
+  light: 0,
+};
+
 schedulerTask *task_wifi_connect, *task_buzzer, *task_light_sensor, *task_led_test, *task_web_server;
 
 

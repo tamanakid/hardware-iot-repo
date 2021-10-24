@@ -27,7 +27,7 @@ void setupWifiConnect () {
   WiFi.mode(WIFI_STA);
   
   WiFi.begin(STASSID, STAPSK);
-  
+  /*
   Serial.println("task:WifiConnect> Print Statuses");
   Serial.print("WL_CONNECTED");
   Serial.println(WL_CONNECTED);
@@ -45,6 +45,7 @@ void setupWifiConnect () {
   Serial.println(WL_DISCONNECTED);
   Serial.print("WL_CONNECTION_LOST");
   Serial.println(WL_CONNECTION_LOST);
+  */
 }
 
 
