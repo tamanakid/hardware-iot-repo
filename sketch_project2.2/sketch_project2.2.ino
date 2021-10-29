@@ -4,12 +4,8 @@
 #include "hardware_d1mini.h"
 #include "scheduler.h"
 #include "sketch.h"
+#include "ssid.h"
 
-
-#ifndef STASSID
-#define STASSID "tamanakid"
-#define STAPSK  "password"
-#endif
 
 t_global_state state = {
   is_overlit: false,
