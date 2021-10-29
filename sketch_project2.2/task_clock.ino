@@ -42,6 +42,7 @@ void taskClock() {
   }
 
   // debugging
+  /*
   char *timestring = (char*) malloc(2*sizeof(char));
   sprintf(timestring, "%02d", state.timestamp.hours);
   Serial.print(timestring);
@@ -51,6 +52,7 @@ void taskClock() {
   Serial.print(":");
   sprintf(timestring, "%02d", state.timestamp.seconds);
   Serial.println(timestring);
+  */
 }
 
 

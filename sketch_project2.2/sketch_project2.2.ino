@@ -8,9 +8,10 @@
 
 
 t_global_state state = {
+  light: 0,
+  light_threshold: 512,
   is_overlit: false,
   is_server_active: false,
-  light: 0,
   timestamp: {
     hours: 0,
     minutes: 0,

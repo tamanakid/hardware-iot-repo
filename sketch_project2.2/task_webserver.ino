@@ -18,6 +18,7 @@ void setupWebServer() {
   
   server.on("/home", handleHome);
   server.on("/set-alarm", handleSetAlarm);
+  server.on("/set-light-threshold", handleSetLightThreshold);
   server.on("/", []() {
     server.sendHeader("Location", String("/home"), true);
     server.send(302, "text/plain", "");
@@ -46,11 +47,11 @@ void resetWebServer() {
 
 
 void handleHome() {
-  char temp[800];
+  char temp[1600];
 
   Serial.println(state.light);
 
-  snprintf(temp, 800,
+  snprintf(temp, 1600,
     "<html>\
       <head>\
         <meta http-equiv='refresh' content='5'/>\
@@ -65,14 +66,32 @@ void handleHome() {
       <body>\
         <h1>ESP8266 Interface</h1>\
         <h2>Light sensor: %04d</h2>\
+        <form action=\"/set-light-threshold\" method=\"POST\">\
+          <label for=\"threshold\">Light sensor threshold</label>\
+          <input type=\"number\" name=\"threshold\" value=\"%04d\" id=\"threshold\" placeholder=\"Insert a number between 0 and 1024\">\
+          <input type=\"submit\" value=\"Submit\">\
+        </form>\
         <a href='/set-alarm'><button style='display: %s'>Activate alarm</button></a>\
       </body>\
     </html>",
     
     state.light,
+    state.light_threshold,
     state.is_overlit ? "inherit" : "none"
   );
   server.send(200, "text/html", temp);
+}
+
+void handleSetLightThreshold() {
+  char* threshold = (char*) malloc(100*sizeof(char));
+  sprintf(threshold, "%s", server.arg("threshold"));
+  state.light_threshold = atoi(threshold);
+  
+  Serial.print("Setting new threshold: ");
+  Serial.println(state.light_threshold);
+
+  server.sendHeader("Location", String("/home"), true);
+  server.send(302, "text/plain", "");
 }
 
 void handleSetAlarm() {

@@ -4,15 +4,7 @@
 #include "sketch.h"
 
 
-
-// TODO: Likely needs not be a task, but merely functionality within the web server
-
 extern t_global_state state;
-
-#define LIGHT_SENSOR_NOISE 20
-#define LIGHT_SENSOR_RANGE (1020 - LIGHT_SENSOR_NOISE)
-#define LIGHT_SENSOR_THRESHOLD 500
-
 
 
 void setupLightSensor () {
@@ -23,7 +15,7 @@ void setupLightSensor () {
 void taskLightSensor() {  
   state.light = analogRead(MINID1_PIN_A0);
 
-  if (state.light > LIGHT_SENSOR_THRESHOLD) {
+  if (state.light > state.light_threshold) {
     state.is_overlit = true;
   } else {
     state.is_overlit = false;
