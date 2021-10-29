@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
-#include <NTPClient.h>
 
 #include "hardware.h"
 #include "hardware_d1mini.h"
@@ -11,10 +10,6 @@
 
 extern t_global_state state;
 extern ESP8266WebServer server;
-extern WiFiUDP UdpInstance;
-
-const int utcOffsetInSeconds = 7200;
-NTPClient ntpClient(UdpInstance, "1.es.pool.ntp.org", utcOffsetInSeconds);
 
 
 void setupWebServer() {
@@ -37,7 +32,6 @@ void taskWebServer() {
   if (!state.is_server_active) {
     server.begin();
     state.is_server_active = true;
-    ntpRequest();
   }
 
   server.handleClient();
@@ -49,27 +43,6 @@ void resetWebServer() {
   state.is_server_active = false;
   digitalWrite(MINID1_PIN_D0, LOW);
 }
-
-
-// Perhaps move to setupClock task?
-void ntpRequest () {
-  ntpClient.begin();
-
-  Serial.println("Requesting timestamp to NTP server...");
-  ntpClient.update();
-  Serial.println("Request timestamp to NTP server complete");
-
-  state.timestamp.hours = ntpClient.getHours();
-  state.timestamp.minutes = ntpClient.getMinutes();
-  state.timestamp.seconds = ntpClient.getSeconds();
-
-  Serial.print(state.timestamp.hours);
-  Serial.print(":");
-  Serial.print(state.timestamp.minutes);
-  Serial.print(":");
-  Serial.println(state.timestamp.seconds);
-}
-
 
 
 void handleHome() {

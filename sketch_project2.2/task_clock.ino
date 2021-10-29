@@ -1,11 +1,26 @@
+#include <NTPClient.h>
+
 #include "sketch.h"
 
 
 extern t_global_state state;
 
+extern WiFiUDP UdpInstance;
+
+const int utcOffsetInSeconds = 7200;
+NTPClient ntpClient(UdpInstance, "1.es.pool.ntp.org", utcOffsetInSeconds);
+
 
 void setupClock() {
-  // Maybe move NTP request here
+  ntpClient.begin();
+
+  Serial.println("Requesting timestamp to NTP server...");
+  ntpClient.update();
+  Serial.println("Request timestamp to NTP server complete");
+
+  state.timestamp.hours = ntpClient.getHours();
+  state.timestamp.minutes = ntpClient.getMinutes();
+  state.timestamp.seconds = ntpClient.getSeconds();
 }
 
 
@@ -25,6 +40,17 @@ void taskClock() {
   if (state.timestamp.hours == 24) {
     state.timestamp.hours = 0;
   }
+
+  // debugging
+  char *timestring = (char*) malloc(2*sizeof(char));
+  sprintf(timestring, "%02d", state.timestamp.hours);
+  Serial.print(timestring);
+  Serial.print(":");
+  sprintf(timestring, "%02d", state.timestamp.minutes);
+  Serial.print(timestring);
+  Serial.print(":");
+  sprintf(timestring, "%02d", state.timestamp.seconds);
+  Serial.println(timestring);
 }
 
 
