@@ -39,11 +39,11 @@ void taskLightSensor() {
 
   // Write into measures file
   if (state.is_server_active) {
-    char content[25];
+    char content[60];
 
     sprintf(
       content,
-      "%02d:%02d:%02d - %03d - %s",
+      "%02d:%02d:%02d - %03d - %-42s\n",
       state.timestamp.hours,
       state.timestamp.minutes,
       state.timestamp.seconds,
@@ -51,14 +51,14 @@ void taskLightSensor() {
       state.is_overlit ? "overlit!" : "underlit"
     );
 
-    size_t bytes = light_measures_file.write(content, 25);
+    size_t bytes = light_measures_file.write(content, 60);
 
     if (bytes <= 0) {
       Serial.println("task:LightSensor> Error writing measure to measures file");
     } else {
       Serial.println("task:LightSensor> Measure written to measures file:");
       Serial.print(">>>");
-      Serial.println(content);
+      Serial.print(content);
     }
   } else {
     Serial.println("task:LightSensor> Measure not saved to measures file since server was detected as inactive");
@@ -81,13 +81,14 @@ void initLightMeasuresFile() {
   if (light_measures_content) {
     Serial.println("task:LightSensor> Previous light measures:");
 
-    char buffer[25];
+    char buffer[60];
     while(light_measures_content.available()) {
       // Serial.write(light_measures_content.read());
-      int l = light_measures_content.readBytesUntil('\n', buffer, sizeof(buffer));
+      // int l = light_measures_content.readBytesUntil('\n', buffer, sizeof(buffer));
+      int l = light_measures_content.readBytes(buffer, sizeof(buffer));
       buffer[l] = 0;
       Serial.print(">>>");
-      Serial.println(buffer);
+      Serial.print(buffer);
     }
   } else {
     Serial.println("task:LightSensor> No light measures content");
