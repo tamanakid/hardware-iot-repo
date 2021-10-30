@@ -66,21 +66,24 @@ void handleHome() {
       <body>\
         <h1>ESP8266 Interface</h1>\
         <h2>Light sensor: %04d</h2>\
+        <form action=\"/set-alarm\" method=\"POST\">\
+          <input type=\"submit\" value=\"Activate Alarm\" style=\"display: %s\">\
+        </form>\
         <form action=\"/set-light-threshold\" method=\"POST\">\
           <label for=\"threshold\">Light sensor threshold</label>\
           <input type=\"number\" name=\"threshold\" value=\"%04d\" id=\"threshold\" placeholder=\"Insert a number between 0 and 1024\">\
           <input type=\"submit\" value=\"Submit\">\
         </form>\
-        <a href='/set-alarm'><button style='display: %s'>Activate alarm</button></a>\
       </body>\
     </html>",
     
     state.light,
-    state.light_threshold,
-    state.is_overlit ? "inherit" : "none"
+    (state.is_overlit && !state.is_alarm_active) ? "inherit" : "none",
+    state.light_threshold
   );
   server.send(200, "text/html", temp);
 }
+
 
 void handleSetLightThreshold() {
   char* threshold = (char*) malloc(100*sizeof(char));
@@ -94,31 +97,17 @@ void handleSetLightThreshold() {
   server.send(302, "text/plain", "");
 }
 
+
 void handleSetAlarm() {
   char temp[600];
 
   digitalWrite(MINID1_PIN_D0, HIGH);
+  state.is_alarm_active = true;
 
-  snprintf(temp, 600,
-    "<html>\
-      <head>\
-        <meta http-equiv='refresh' content='5; url=\"/home\"'/>\
-        <title>ESP8266 Interface</title>\
-        <style>\
-          body { background-color: #024; color: #def; text-align: center; margin: 2em; font-size: 1.5em; }\
-        </style>\
-      </head>\
-      <body>\
-        <h1>ESP8266 Interface</h1>\
-        <h2>Light sensor: %04d</h2>\
-        <h2>ALARM SET!</h2>\
-      </body>\
-    </html>",
-    
-    state.light
-  );
-  server.send(200, "text/html", temp);
+  server.sendHeader("Location", String("/home"), true);
+  server.send(302, "text/plain", "");
 }
+
 
 void handleNotFound() {
   String message = "File Not Found\n\n";

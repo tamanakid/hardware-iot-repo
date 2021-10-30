@@ -48,6 +48,7 @@ typedef struct {
   int light_threshold;
   bool is_overlit;
   bool is_server_active;
+  bool is_alarm_active;
   t_time timestamp;
 } t_global_state;
 

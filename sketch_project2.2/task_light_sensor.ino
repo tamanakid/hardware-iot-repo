@@ -21,6 +21,7 @@ void taskLightSensor() {
     state.is_overlit = false;
     if (state.is_server_active) {
       digitalWrite(MINID1_PIN_D0, LOW);
+      state.is_alarm_active = false;
     }
   }
 
