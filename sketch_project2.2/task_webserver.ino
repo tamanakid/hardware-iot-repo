@@ -50,7 +50,7 @@ void handleHome() {
   char temp[1600];
 
   Serial.println(state.light);
-
+  
   snprintf(temp, 1600,
     "<html>\
       <head>\
@@ -99,8 +99,6 @@ void handleSetLightThreshold() {
 
 
 void handleSetAlarm() {
-  char temp[600];
-
   digitalWrite(MINID1_PIN_D0, HIGH);
   state.is_alarm_active = true;
 

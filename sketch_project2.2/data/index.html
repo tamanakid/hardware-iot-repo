@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<meta http-equiv='refresh' content='5'/>
+		<link rel='icon' type='image/png' href='https://freepngimg.com/download/technology/51071-7-microcontroller-hd-image-free-png.png'/>
+		<title>ESP8266 Interface</title>
+		<style>
+			body { background-color: #024; color: #def; margin: 2em; font-size: 1.5em; display: flex; flex-direction: column; align-items: center; }
+			button { background: #fee; padding: 1em; border: 2px solid #d77; border-radius: 1em; font-size: 1.25em }
+			a { text-decoration: none; }
+		</style>
+	</head>
+	<body>
+		<h1>ESP8266 Interface</h1>
+		<h2>Light sensor: %04d</h2>
+		<form action="/set-alarm" method="POST">
+			<input type="submit" value="Activate Alarm" style="display: %s">
+		</form>
+		<form action="/set-light-threshold" method="POST">
+			<label for="threshold">Light sensor threshold</label>
+			<input type="number" name="threshold" value="%04d" id="threshold" placeholder="Insert a number between 0 and 1024">
+			<input type="submit" value="Submit">
+		</form>
+	</body>
+</html>
