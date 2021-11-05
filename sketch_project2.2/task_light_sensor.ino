@@ -39,11 +39,11 @@ void taskLightSensor() {
 
   // Write into measures file
   if (state.is_server_active) {
-    char content[60];
+    char content[26];
 
     sprintf(
       content,
-      "%02d:%02d:%02d - %03d - %-42s\n",
+      "%02d:%02d:%02d - %03d - %s\n",
       state.timestamp.hours,
       state.timestamp.minutes,
       state.timestamp.seconds,
@@ -51,11 +51,12 @@ void taskLightSensor() {
       state.is_overlit ? "overlit!" : "underlit"
     );
 
-    size_t bytes = light_measures_file.write(content, 60);
+    size_t bytes = light_measures_file.write(content, 26);
 
     if (bytes <= 0) {
       Serial.println("task:LightSensor> Error writing measure to measures file");
     } else {
+      Serial.println(light_measures_file.size());
       Serial.println("task:LightSensor> Measure written to measures file:");
       Serial.print(">>>");
       Serial.print(content);
@@ -79,17 +80,13 @@ void initLightMeasuresFile() {
   // if (!exists(PATH_LIGHT_MEASURES)) {
   File light_measures_content = SPIFFS.open(PATH_LIGHT_MEASURES, "r");
   if (light_measures_content) {
+    Serial.println(light_measures_content.size());
+    
     Serial.println("task:LightSensor> Previous light measures:");
-
-    char buffer[60];
     while(light_measures_content.available()) {
-      // Serial.write(light_measures_content.read());
-      // int l = light_measures_content.readBytesUntil('\n', buffer, sizeof(buffer));
-      int l = light_measures_content.readBytes(buffer, sizeof(buffer));
-      buffer[l] = 0;
-      Serial.print(">>>");
-      Serial.print(buffer);
+      Serial.write(light_measures_content.read()); 
     }
+    
   } else {
     Serial.println("task:LightSensor> No light measures content");
   }
