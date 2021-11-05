@@ -25,6 +25,8 @@ schedulerTask *task_wifi_connect, *task_buzzer, *task_light_sensor, *task_led_te
 
 void setup() {
   Serial.begin(115200);
+
+  analogReference(DEFAULT);
   
   setupWifiConnect();
   setupBuzzer();

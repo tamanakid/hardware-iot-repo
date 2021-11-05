@@ -48,8 +48,6 @@ void resetWebServer() {
 
 void handleHome() {
   char temp[1600];
-
-  Serial.println(state.light);
   
   snprintf(temp, 1600,
     "<html>\
@@ -60,6 +58,9 @@ void handleHome() {
         <style>\
           body { background-color: #024; color: #def; margin: 2em; font-size: 1.5em; display: flex; flex-direction: column; align-items: center; }\
           button { background: #fee; padding: 1em; border: 2px solid #d77; border-radius: 1em; font-size: 1.25em }\
+          div.alarm-led { width: 50px; height: 50px; border-radius: 50px; border: 1em double #fff; margin: 1em }\
+          div.alarm-led-on { background: #f00 }\
+          div.alarm-led-off { background: none }\
           a { text-decoration: none; }\
         </style>\
       </head>\
@@ -74,12 +75,14 @@ void handleHome() {
           <input type=\"number\" name=\"threshold\" value=\"%04d\" id=\"threshold\" placeholder=\"Insert a number between 0 and 1024\">\
           <input type=\"submit\" value=\"Submit\">\
         </form>\
+        <div class=\"alarm-led %s\">\
       </body>\
     </html>",
     
     state.light,
     (state.is_overlit && !state.is_alarm_active) ? "inherit" : "none",
-    state.light_threshold
+    state.light_threshold,
+    state.is_alarm_active ? "alarm-led-on" : "alarm-led-off"
   );
   server.send(200, "text/html", temp);
 }

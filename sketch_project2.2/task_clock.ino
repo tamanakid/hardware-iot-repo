@@ -7,7 +7,7 @@ extern t_global_state state;
 
 extern WiFiUDP UdpInstance;
 
-const int utcOffsetInSeconds = 7200;
+const int utcOffsetInSeconds = 3600;
 NTPClient ntpClient(UdpInstance, "1.es.pool.ntp.org", utcOffsetInSeconds);
 
 
