@@ -25,9 +25,11 @@ void taskLightSensor() {
     initial_write = true;
   }
   
-  state.light = analogRead(MINID1_PIN_A0);
-  Serial.print("Light read: ");
-  Serial.println(state.light);
+  int analog_read = analogRead(MINID1_PIN_A0);
+  // Serial.print("Light read: ");
+  // Serial.println(analog_read);
+
+  state.light = (analog_read * 3.0157) - 8.094;
 
   if (state.light > state.light_threshold) {
     state.is_overlit = true;
@@ -49,7 +51,7 @@ void taskLightSensor() {
       state.timestamp.hours,
       state.timestamp.minutes,
       state.timestamp.seconds,
-      state.light * 100/1024,
+      state.light * 100/3070,
       state.is_overlit ? "overlit!" : "underlit"
     );
 
@@ -58,7 +60,7 @@ void taskLightSensor() {
     if (bytes <= 0) {
       Serial.println("task:LightSensor> Error writing measure to measures file");
     } else {
-      // Serial.println(light_measures_file.size());
+      Serial.println(light_measures_file.size());
       Serial.println("task:LightSensor> Measure written to measures file:");
       Serial.print(">>>");
       Serial.print(content);
@@ -82,7 +84,7 @@ void initLightMeasuresFile() {
   // if (!exists(PATH_LIGHT_MEASURES)) {
   File light_measures_content = SPIFFS.open(PATH_LIGHT_MEASURES, "r");
   if (light_measures_content) {
-    // Serial.println(light_measures_content.size());
+    Serial.println(light_measures_content.size());
     
     Serial.println("task:LightSensor> Previous light measures:");
     while(light_measures_content.available()) {

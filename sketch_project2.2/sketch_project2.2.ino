@@ -9,7 +9,7 @@
 
 t_global_state state = {
   light: 0,
-  light_threshold: 512,
+  light_threshold: 1500,
   is_overlit: false,
   is_server_active: false,
   is_alarm_active: false,

@@ -66,7 +66,7 @@ void handleHome() {
       </head>\
       <body>\
         <h1>ESP8266 Interface</h1>\
-        <h2>Light sensor: %04d</h2>\
+        <h2>Light sensor: %04d mV</h2>\
         <form action=\"/set-alarm\" method=\"POST\">\
           <input type=\"submit\" value=\"Activate Alarm\" style=\"display: %s\">\
         </form>\
