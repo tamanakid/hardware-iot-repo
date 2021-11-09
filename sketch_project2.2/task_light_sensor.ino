@@ -21,7 +21,7 @@ void setupLightSensor () {
 void taskLightSensor() {
   static bool initial_write = false;
   if (!initial_write) {
-    initLightMeasuresFile();
+    _flashInitFile();
     initial_write = true;
   }
   
@@ -41,30 +41,73 @@ void taskLightSensor() {
     }
   }
 
+  _saveMeasure();
+}
+
+
+void _saveMeasure() {
   // Write into measures file
   if (state.is_server_active) {
-    char content[28];
-
+    
+    char text_measure[30];
     sprintf(
-      content,
-      "%02d:%02d:%02d - %03d - %s\n",
+      text_measure,
+      "%02d:%02d:%02d - %04d mV - %s\n",
       state.timestamp.hours,
       state.timestamp.minutes,
       state.timestamp.seconds,
-      state.light * 100/3070,
+      state.light,
       state.is_overlit ? "overlit!" : "underlit"
     );
 
-    size_t bytes = light_measures_file.write(content, 28);
+    Serial.print(state.light);
+    Serial.print("...");
+    // Serial.print("task:LightSensor> Light measurement:");
+    // Serial.print(">>>");
+    // Serial.print(text_measure);
 
-    if (bytes <= 0) {
-      Serial.println("task:LightSensor> Error writing measure to measures file");
-    } else {
-      Serial.println(light_measures_file.size());
-      Serial.println("task:LightSensor> Measure written to measures file:");
-      Serial.print(">>>");
-      Serial.print(content);
+    state.measures.values[state.measures.count] = state.light;
+    state.measures.count++;
+
+    if (state.measures.count == 12) {
+      state.measures.count = 0;
+
+      // Calculate mean
+      int mean = 0;
+      for (int i = 0; i < 12; i++) {
+        mean += state.measures.values[i];
+      }
+      mean = mean / 12;
+
+      bool mean_is_overlit = (mean > state.light_threshold);
+
+      // Format text
+      char text_mean[31];
+      sprintf(
+        text_mean,
+        "%02d:%02d:%02d - %04d mV - %s\n",
+        state.timestamp.hours,
+        state.timestamp.minutes,
+        state.timestamp.seconds,
+        mean,
+        mean_is_overlit ? "overlit!" : "underlit"
+      );
+
+      size_t bytes = light_measures_file.print(text_mean);
+      if (bytes <= 0) {
+        Serial.println("task:LightSensor> Error writing measure to measures file");
+      } else {
+        Serial.println("");
+        Serial.print("File Size: ");
+        Serial.println(light_measures_file.size());
+        // Serial.println("");
+        Serial.println("task:LightSensor> Mean written to measures file:");
+        Serial.print(">>>");
+        Serial.print(text_mean);
+        Serial.println("");
+      }
     }
+
   } else {
     Serial.println("task:LightSensor> Measure not saved to measures file since server was detected as inactive");
   }
@@ -75,18 +118,19 @@ void taskLightSensor() {
   // Serial.println(buffer);
 }
 
-void initLightMeasuresFile() {
+
+void _flashInitFile() {
   if (!SPIFFS.begin()) {
     Serial.println("task:LightSensor> Error intializing SPIFFS");
     return;
   }
 
-  // if (!exists(PATH_LIGHT_MEASURES)) {
   File light_measures_content = SPIFFS.open(PATH_LIGHT_MEASURES, "r");
-  if (light_measures_content) {
+  if (light_measures_content) {    
+    Serial.println("task:LightSensor> Previous light measures:");
+    Serial.print("task:LightSensor> File Size: ");
     Serial.println(light_measures_content.size());
     
-    Serial.println("task:LightSensor> Previous light measures:");
     while(light_measures_content.available()) {
       Serial.write(light_measures_content.read()); 
     }

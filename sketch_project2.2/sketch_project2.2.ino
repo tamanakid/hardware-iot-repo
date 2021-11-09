@@ -17,6 +17,10 @@ t_global_state state = {
     hours: 0,
     minutes: 0,
     seconds: 0,
+  },
+  measures: {
+    values: { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    count: 0,
   }
 };
 

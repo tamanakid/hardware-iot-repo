@@ -41,7 +41,13 @@ typedef struct {
   int hours;
   int minutes;
   int seconds;
+  int epoch;
 } t_time;
+
+typedef struct {
+  int values[12];
+  int count;
+} t_measures;
 
 typedef struct {
   int light;
@@ -50,8 +56,8 @@ typedef struct {
   bool is_server_active;
   bool is_alarm_active;
   t_time timestamp;
+  t_measures measures;
 } t_global_state;
-
 
 
 // Function declarations
