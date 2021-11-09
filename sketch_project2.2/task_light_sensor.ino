@@ -98,6 +98,7 @@ void _saveMeasure() {
         Serial.println("task:LightSensor> Error writing measure to measures file");
       } else {
         Serial.println("");
+        Serial.println("");
         Serial.print("File Size: ");
         Serial.println(light_measures_file.size());
         // Serial.println("");

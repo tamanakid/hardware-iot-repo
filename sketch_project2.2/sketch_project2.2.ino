@@ -31,6 +31,11 @@ void setup() {
   Serial.begin(115200);
 
   analogReference(DEFAULT);
+
+  
+  Serial.println("");
+  Serial.println("");
+  Serial.println("RESET: Running setup function.");
   
   setupWifiConnect();
   setupBuzzer();
