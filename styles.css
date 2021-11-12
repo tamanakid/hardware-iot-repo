@@ -1,0 +1,85 @@
+body {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: 1fr 7fr;
+	grid-template-areas:
+		"header header header"
+		"temperature humidity somethong";
+	background-color: #eee;
+	color: #004;
+	margin: 2em;
+	font-size: 1.5em;
+}
+
+.align-center {
+	display: flex;
+	align-items: center;
+}
+
+section#header {
+	grid-area: header;
+	display: flex;
+	justify-content: center;
+}
+
+section#temperature {
+	grid-area: temperature;
+}
+
+section#humidity {
+	grid-area: humidity;
+}
+
+.measure_block {
+	padding: 0.25em 1em;
+}
+
+.measure_current {
+	display: flex;
+	align-items: center;
+}
+.measure_current_value {
+	font-size: 1.2em;
+	color: #00a;
+	padding: 0 0.25em 0 0.5em;
+}
+.measure_current_icon {
+	padding-right: 0.5em;
+}
+
+.measure_means {
+	display: flex;
+	flex-direction: column;
+}
+
+.measure_means > ul {
+	margin-top: 0.5em;
+}
+
+button {
+	background: #fee;
+	padding: 1em;
+	font-size: 1.25em;
+	border: 2px solid #d77;
+	border-radius: 1em;
+}
+
+div.alarm-led {
+	width: 50px;
+	height: 50px;
+	border-radius: 50px;
+	border: 1em double #fff;
+	margin: 1em;
+}
+
+div.alarm-led-on {
+	background: #f00
+}
+
+div.alarm-led-off {
+	background: none
+}
+
+a {
+	text-decoration: none;
+}
