@@ -1,14 +1,18 @@
 body {
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: 1fr 7fr;
+	grid-template-columns: 3fr 1fr;
+	grid-template-rows: 3em 1fr;
 	grid-template-areas:
-		"header header header"
-		"temperature humidity somethong";
+		"header alarm"
+		"content alarm";
 	background-color: #eee;
 	color: #004;
-	margin: 2em;
 	font-size: 1.5em;
+	margin: 0;
+}
+
+h1 {
+	margin: 0;
 }
 
 .align-center {
@@ -20,6 +24,55 @@ section#header {
 	grid-area: header;
 	display: flex;
 	justify-content: center;
+	align-items: center;
+	padding-top: 0.5em;
+}
+
+.header_logo {
+	height: 55%;
+    padding-right: 0.5em;
+}
+
+section#content {
+	grid-area: content;
+	display: grid;
+	grid-template-rows: 4em 1fr;
+	margin: 0.5em 2em;
+}
+
+section#alarm {
+	height: calc(100vh - 4em);
+	display: grid;
+	grid-template-rows: 4em repeat(2, 8em);
+	justify-content: center;
+	padding: 2em 1em;
+	background: #004;
+	color: #eee;
+}
+
+.content_tabs {
+	display: flex;
+	flex-direction: row;
+	margin: 1em 0;
+}
+
+.content_tabs_el {
+	/* background-color: #dde; */
+	display: flex;
+	align-items: center;
+	width: 25%;
+	font-size: 0.8em;
+	border-bottom: 1px solid #cce;
+	margin: 0 0.5em;
+
+}
+.content_tabs_el:hover {
+	background-color: #cce;
+	cursor: pointer;
+}
+
+.content_tabs_icon {
+	padding-right: 0.5em;
 }
 
 section#temperature {
@@ -29,6 +82,13 @@ section#temperature {
 section#humidity {
 	grid-area: humidity;
 }
+
+
+
+
+
+
+
 
 .measure_block {
 	padding: 0.25em 1em;
@@ -43,9 +103,7 @@ section#humidity {
 	color: #00a;
 	padding: 0 0.25em 0 0.5em;
 }
-.measure_current_icon {
-	padding-right: 0.5em;
-}
+
 
 .measure_means {
 	display: flex;
