@@ -4,11 +4,12 @@ body {
 	grid-template-rows: 3em 1fr;
 	grid-template-areas:
 		"header alarm"
-		"content alarm";
+		"container alarm";
 	background-color: #eee;
 	color: #004;
 	font-size: 1.5em;
 	margin: 0;
+	overflow-y: hidden;
 }
 
 h1 {
@@ -33,10 +34,11 @@ section#header {
     padding-right: 0.5em;
 }
 
-section#content {
-	grid-area: content;
+section#container {
+	grid-area: container;
 	display: grid;
 	grid-template-rows: 4em 1fr;
+	height: calc(100vh - 3em - 1em);
 	margin: 0.5em 2em;
 }
 
@@ -50,46 +52,88 @@ section#alarm {
 	color: #eee;
 }
 
-.content_tabs {
+.container_tabs {
 	display: flex;
 	flex-direction: row;
 	margin: 1em 0;
 }
 
-.content_tabs_el {
+.container_tabs_el {
 	/* background-color: #dde; */
 	display: flex;
 	align-items: center;
 	width: 25%;
 	font-size: 0.8em;
-	border-bottom: 1px solid #cce;
+	border-bottom: 1px solid #ccd;
 	margin: 0 0.5em;
+	padding: 0 0.5em;
 
 }
-.content_tabs_el:hover {
-	background-color: #cce;
+.container_tabs_el:hover {
+	background-color: #ccd;
 	cursor: pointer;
 }
 
-.content_tabs_icon {
+.container_tabs_icon {
 	padding-right: 0.5em;
 }
 
-section#temperature {
-	grid-area: temperature;
+
+
+.content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding-top: 1em;
+	overflow-y: scroll;
 }
 
-section#humidity {
-	grid-area: humidity;
+.content--hidden {
+	display: none;
+}
+
+
+.measure {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 2em;
+	font-size: 1em;
+}
+
+.measure > label {
+	font-size: 18px;
+}
+.measure_value {
+	font-size: 1.5em;
+	padding-left: 1.5rem;
+}
+.measure_value > .measure_value_units {
+	font-size: 20px;
+}
+
+.measure_comp {
+	font-size: 16px;
+	padding-left: 1.5rem;
+}
+
+.measure--list {
+	font-size: 0.7em;
+}
+.measure--list ul {
+	margin: 0;
+	padding-left: 1.5em;
+}
+.measure--list li {
+	margin: 0.5em 0;
+}
+.measure--list div {
+	padding-left: 0
 }
 
 
 
 
 
-
-
-
+/* 
 .measure_block {
 	padding: 0.25em 1em;
 }
@@ -140,4 +184,4 @@ div.alarm-led-off {
 
 a {
 	text-decoration: none;
-}
+} */
