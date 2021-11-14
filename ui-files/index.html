@@ -149,6 +149,48 @@
 
       <div class="content_config">
 
+        <div class="configuration">
+          <label>Threshold value</label>
+          <div class="configuration_current">
+            <span>Currently set to:</span>
+            <span class="configuration_current_value">30</span>
+            <span>ºC</span>
+          </div>
+          <div class="configuration_edit configuration_edit--input" id="config_temp_threshold">
+            <input type="number" min="0" max="100" />
+            <span>ºC</span>
+            <button>Submit</button>
+          </div>
+        </div>
+
+        <div class="configuration">
+          <label>Measurement Rate</label>
+          <div class="configuration_current">
+            <span>Currently set to:</span>
+            <span class="configuration_current_value">5</span>
+            <span>seconds</span>
+          </div>
+          <div class="configuration_edit configuration_edit--input" id="config_temp_rate">
+            <input type="number" min="0" max="100" />
+            <span>seconds</span>
+            <button>Submit</button>
+          </div>
+        </div>
+
+        <div class="configuration">
+          <label>Display units</label>
+          <div class="configuration_edit configuration_edit--select" id="config_temp_units">
+            <select>
+              <option value="c">ºC (Celsius)</option>
+              <option value="f">ºF (Fahrenheit)</option>
+              <option value="k">K (Kelvin)</option>
+            </select>
+          </div>
+          <div class="configuration_comp">
+            <span><b>Note</b>: This only changes the displayed values; all values are normalized to "Celsius" for computational and storage purposes</span>
+          </div>
+        </div>
+
       </div>
 
     </section>
