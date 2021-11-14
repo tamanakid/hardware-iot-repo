@@ -1,5 +1,25 @@
-const tabTempButton = document.querySelector('[data-tab-id=temperature]');
+const tabButtons = {
+    temperature: document.querySelector('[data-tab-id=temperature]'),
+    humidity: document.querySelector('[data-tab-id=humidity]'),
+    storage: document.querySelector('[data-tab-id=storage]'),
+}
 
-tabTempButton.onclick = function () {
-    alert('hello');
+
+const tabContents = {
+    temperature: document.querySelector('#content_temperature'),
+    humidity: document.querySelector('#content_humidity'),
+    // storage: document.querySelector('#content_storage'),
+}
+
+
+tabButtons.temperature.onclick = function () {
+    tabContents.temperature.classList.remove('content--hidden');
+    tabContents.humidity.classList.add('content--hidden');
+    // tabContents.storage.classList.add('content--hidden');
+}
+
+tabButtons.humidity.onclick = function () {
+    tabContents.humidity.classList.remove('content--hidden');
+    tabContents.temperature.classList.add('content--hidden');
+    // tabContents.storage.classList.add('content--hidden');
 }

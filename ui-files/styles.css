@@ -118,6 +118,14 @@ section#alarm {
 	padding-left: 1.5rem;
 }
 
+.measure_comp_timestamp {
+	display: flex;
+	align-items: center;
+}
+.measure_comp_timestamp > svg{
+	padding-right: 5px;
+}
+
 .measure--list {
 	font-size: 0.7em;
 }

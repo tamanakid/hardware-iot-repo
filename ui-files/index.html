@@ -44,7 +44,7 @@
 
 
     <!-- container Temperature -->
-    <section class="content">
+    <section class="content" id="content_temperature">
 
       <div class="content_info">
 
@@ -56,7 +56,10 @@
           </div>
           <div class="measure_comp">
             <div class="meaure_comp_timestamp">
-              <!-- Add clock icon -->
+              <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+              </svg>
               17:51:08
             </div>
           </div>
@@ -73,7 +76,10 @@
               </div>
               <div class="measure_comp">
                 <div class="meaure_comp_timestamp">
-                  <!-- Add clock icon -->
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
                   17:50:33
                 </div>
               </div>
@@ -86,7 +92,10 @@
               </div>
               <div class="measure_comp">
                 <div class="meaure_comp_timestamp">
-                  <!-- Add clock icon -->
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
                   17:49:33
                 </div>
               </div>
@@ -99,7 +108,10 @@
               </div>
               <div class="measure_comp">
                 <div class="meaure_comp_timestamp">
-                  <!-- Add clock icon -->
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
                   17:48:33
                 </div>
               </div>
@@ -119,7 +131,10 @@
               <div class="measure_comp">
                 <span>Highest temperature registered</span>
                 <div class="meaure_comp_timestamp">
-                  <!-- Add clock icon -->
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
                   08/11/2021 17:22:38
                 </div>
               </div>
@@ -133,7 +148,10 @@
               <div class="measure_comp">
                 <span>Lowest temperature registered</span>
                 <div class="meaure_comp_timestamp">
-                  <!-- Add clock icon -->
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
                   09/11/2021 06:29:11
                 </div>
               </div>
@@ -188,6 +206,161 @@
           </div>
           <div class="configuration_comp">
             <span><b>Note</b>: This only changes the displayed values; all values are normalized to "Celsius" for computational and storage purposes</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+      <!-- container Humidity: Could be dynamically generated! -->
+    <section class="content content--hidden" id="content_humidity">
+
+      <div class="content_info">
+
+        <div class="measure">
+          <label>Current Value</label>
+          <div class="measure_value">
+            <span>48</span>
+            <span class="measure_value_units">%</span>
+          </div>
+          <div class="measure_comp">
+            <div class="meaure_comp_timestamp">
+              <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                <path d="M0 0h24v24H0V0z" fill="none"/>
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+              </svg>
+              17:51:08
+            </div>
+          </div>
+        </div>
+
+
+        <div class="measure measure--list">
+          <label>Last Mean Calculations</label>
+          <ul>
+            <li>
+              <div class="measure_value">
+                <span>44</span>
+                <span class="measure_value_units">%</span>
+              </div>
+              <div class="measure_comp">
+                <div class="meaure_comp_timestamp">
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  17:50:33
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <div class="measure_value">
+                <span>41</span>
+                <span class="measure_value_units">%</span>
+              </div>
+              <div class="measure_comp">
+                <div class="meaure_comp_timestamp">
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  17:49:33
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <div class="measure_value">
+                <span>47</span>
+                <span class="measure_value_units">%</span>
+              </div>
+              <div class="measure_comp">
+                <div class="meaure_comp_timestamp">
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  17:48:33
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+
+        <div class="measure measure--list">
+          <label>Record Measures</label>
+          <ul>
+            <li>
+              <div class="measure_value">
+                <span>68</span>
+                <span class="measure_value_units">%</span>
+              </div>
+              <div class="measure_comp">
+                <span>Highest humidity registered</span>
+                <div class="meaure_comp_timestamp">
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  09/11/2021 19:13:46
+                </div>
+              </div>
+            </li>
+
+            <li>
+              <div class="measure_value">
+                <span>21</span>
+                <span class="measure_value_units">%</span>
+              </div>
+              <div class="measure_comp">
+                <span>Lowest humidity registered</span>
+                <div class="meaure_comp_timestamp">
+                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  09/11/2021 14:11:55
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+
+
+      </div>
+
+
+
+      <div class="content_config">
+
+        <div class="configuration">
+          <label>Threshold value</label>
+          <div class="configuration_current">
+            <span>Currently set to:</span>
+            <span class="configuration_current_value">50</span>
+            <span>%</span>
+          </div>
+          <div class="configuration_edit configuration_edit--input" id="config_humi_threshold">
+            <input type="number" min="0" max="100" />
+            <span>%</span>
+            <button>Submit</button>
+          </div>
+        </div>
+
+        <div class="configuration">
+          <label>Measurement Rate</label>
+          <div class="configuration_current">
+            <span>Currently set to:</span>
+            <span class="configuration_current_value">5</span>
+            <span>seconds</span>
+          </div>
+          <div class="configuration_edit configuration_edit--input" id="config_humi_rate">
+            <input type="number" min="0" max="100" />
+            <span>seconds</span>
+            <button>Submit</button>
           </div>
         </div>
 
