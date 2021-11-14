@@ -73,6 +73,9 @@ section#alarm {
 	background-color: #ccd;
 	cursor: pointer;
 }
+.container_tabs_el--selected {
+	border-bottom: 5px solid #ccd;
+}
 
 .container_tabs_icon {
 	padding-right: 0.5em;
