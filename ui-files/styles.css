@@ -205,11 +205,33 @@ section#container {
 	flex-direction: column;
 }
 
-.storage_nav > ul {
-	margin: 0;
-	padding-left: 1.5em;
+.storage_nav #storage_nav_list {
+	margin: 1em 0 0;
+	padding-left: 0;
 	overflow-y: auto;
+	list-style-type: none;
 }
+
+.storage_nav_list_el {
+	display: flex;
+	align-items: center;
+	border: 1px solid #ccd;
+	margin: 0 1em 0.5em;
+	padding: 0.25em 1em;
+	font-size: 0.8em;
+	cursor: pointer;
+}
+.storage_nav_list_el > svg {
+	padding-right: 0.5em;
+}
+.storage_nav_list_el:hover {
+	background: #ccd;
+}
+
+.storage_nav_list_el--selected {
+	border-right: 5px solid #ccd;
+}
+
 
 .storage_display {
 	padding: 2em 0.5em;
@@ -227,7 +249,10 @@ section#container {
 	font-family: serif;
 	font-size: 1em;
 }
-
+.storage_nav_list_el--selected:hover {
+	cursor: default;
+	background: #eee;
+}
 
 
 
@@ -261,12 +286,13 @@ section#alarm {
 	width: 50px;
 	height: 50px;
 	border-radius: 50px;
-	border: 0.5em double #ccd;
+	/* border: 0.5em double #ccd; */
 	margin: 3px;
 }
 
 .alarm_block_led_inside.alarm-on {
 	background: #f36;
+	border: 0.5em double #ccd;
 }
 
 

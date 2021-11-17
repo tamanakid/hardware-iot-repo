@@ -16,13 +16,21 @@ const tabContents = {
 }
 
 
-function onInitTab (newTab) {
+function onMountTab (newTab) {
     switch (newTab) {
         case 'storage':
-            onFetchStorageFiles();
+            onMountStorage();
             break;
     }
 }
+
+// function onUnmountTab (tab) {
+//     switch (tab) {
+//         case 'storage':
+//             onUnmountStorage();
+//             break;
+//     }
+// }
 
 
 
@@ -37,12 +45,14 @@ function setTab (newTab) {
         } else {
             tabContents[tab].classList.add('content--hidden');
             tabButtons[tab].classList.remove('container_tabs_el--selected');
+
+            // onUnmountTab(tab)
         }
     });
 
     localStorage.setItem(LOCAL_STORAGE_KEY_TAB, newTab);
 
-    onInitTab(newTab);
+    onMountTab(newTab);
 }
 
 tabButtons.temperature.onclick = function () {
