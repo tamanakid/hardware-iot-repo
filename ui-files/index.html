@@ -365,25 +365,45 @@
         </div>
 
       </div>
-
     </section>
 
     <section class="content content--hidden" id="content_storage">
-      <div>TODO</div>
+      <div class="storage_nav">
+        <span class="align-center"><b>Files in Storage</b></span>
+        <ul id="storage_nav_list"></ul>
+      </div>
 
+      <div class="storage_display storage_display--no-file" id="storage_display">
+        Select a file to view its contents
+      </div>
     </section>
 
 
   </section>
 
   <section id="alarm">
-    <span>Alarm</span>
-    <div>Alarm1</div>
-    <div>Alarm2</div>
+    <span>Alarms</span>
+    <div class="alarm_block">
+      <span>Temperature</span>
+      <div class="alarm_block_led_outside">
+        <div class="alarm_block_led_inside alarm-on" id="alarm_led_temp"></div>
+      </div>
+    </div>
+    <div class="alarm_block">
+      <span>Humidity</span>
+      <div class="alarm_block_led_outside">
+        <div class="alarm_block_led_inside" id="alarm_led_hum"></div>
+      </div>
+    </div>
   </section>
 
 
+  <script src="endpoints.js" type="application/javascript"></script>
+  <script src="storage.js" type="application/javascript"></script>
   <script src="script.js" type="application/javascript"></script>
+
+
+
 
   <!-- <section id="temperature">
 

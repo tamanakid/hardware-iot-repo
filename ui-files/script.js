@@ -16,6 +16,15 @@ const tabContents = {
 }
 
 
+function onInitTab (newTab) {
+    switch (newTab) {
+        case 'storage':
+            onFetchStorageFiles();
+            break;
+    }
+}
+
+
 
 /* Event handlers */
 
@@ -32,6 +41,8 @@ function setTab (newTab) {
     });
 
     localStorage.setItem(LOCAL_STORAGE_KEY_TAB, newTab);
+
+    onInitTab(newTab);
 }
 
 tabButtons.temperature.onclick = function () {
