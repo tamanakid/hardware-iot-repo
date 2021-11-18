@@ -4,6 +4,61 @@
 
 
 
+
+function getMeasurementValues () {
+    const endpointUrl = '/measurements';
+
+    const response = {
+        temperature: {
+            current: {
+                value: (10 + Math.random()*20).toFixed(1),
+                timestamp: '09/06/2021 - 17:51:33'
+            },
+            lastMeans: Math.random() > 0.75 ? [
+                { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
+                { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
+                { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
+            ] : undefined,
+            recordMax: (Math.random() > 0.9) ? {
+                value: (30 + Math.random()*5).toFixed(1),
+                timestamp: '09/06/2021 - 17:46:38'
+            } : undefined,
+            recordMin: (Math.random() > 0.9) ? {
+                value: (5 + Math.random()*5).toFixed(1),
+                timestamp: '08/06/2021 - 17:46:38'
+            } : undefined,
+        },
+        humidity: {
+            current: {
+                value: (30 + Math.random()*30).toFixed(1),
+                timestamp: '09/06/2021 - 17:51:33'
+            },
+            lastMeans: Math.random() > 0.75 ? [
+                { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
+                { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
+                { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
+            ] : undefined,
+            recordMax: (Math.random() > 0.9) ? {
+                value: (60 + Math.random()*10).toFixed(1),
+                timestamp: '09/06/2021 - 17:46:38'
+            } : undefined,
+            recordMin: (Math.random() > 0.9) ? {
+                value: (15 + Math.random()*15).toFixed(1),
+                timestamp: '08/06/2021 - 17:46:38'
+            } : undefined,
+        },
+    };
+
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(response);
+        }, 1500);
+    });
+}
+
+
+
+
 function getAllFilesFromStorage () {
     const endpointUrl = '/storage';
 
@@ -20,6 +75,8 @@ function getAllFilesFromStorage () {
         }, 2000);
     });
 }
+
+
 
 
 function getFileFromStorage (filename) {
@@ -45,6 +102,7 @@ function getFileFromStorage (filename) {
 
 
 const endpoints = {
+    getMeasurementValues,
     getAllFilesFromStorage,
     getFileFromStorage,
 };
