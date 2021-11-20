@@ -14,38 +14,38 @@ function getMeasurementValues () {
                 value: (10 + Math.random()*20).toFixed(1),
                 timestamp: '09/06/2021 - 17:51:33'
             },
-            lastMeans: Math.random() > 0.75 ? [
+            means: [
                 { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
                 { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
                 { value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
-            ] : undefined,
-            recordMax: (Math.random() > 0.9) ? {
+            ],
+            recordMax: {
                 value: (30 + Math.random()*5).toFixed(1),
                 timestamp: '09/06/2021 - 17:46:38'
-            } : undefined,
-            recordMin: (Math.random() > 0.9) ? {
+            },
+            recordMin: {
                 value: (5 + Math.random()*5).toFixed(1),
                 timestamp: '08/06/2021 - 17:46:38'
-            } : undefined,
+            },
         },
         humidity: {
             current: {
                 value: (30 + Math.random()*30).toFixed(1),
                 timestamp: '09/06/2021 - 17:51:33'
             },
-            lastMeans: Math.random() > 0.75 ? [
+            means: [
                 { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
                 { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
                 { value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
-            ] : undefined,
-            recordMax: (Math.random() > 0.9) ? {
+            ],
+            recordMax: {
                 value: (60 + Math.random()*10).toFixed(1),
                 timestamp: '09/06/2021 - 17:46:38'
-            } : undefined,
-            recordMin: (Math.random() > 0.9) ? {
+            },
+            recordMin: {
                 value: (15 + Math.random()*15).toFixed(1),
                 timestamp: '08/06/2021 - 17:46:38'
-            } : undefined,
+            },
         },
     };
 

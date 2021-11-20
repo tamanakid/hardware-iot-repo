@@ -9,7 +9,8 @@ const fileIcon = `
 async function onFetchStorageFiles () {
     const listElement = document.getElementById('storage_nav_list');
     
-    listElement.innerHTML = 'Loading';
+    // listElement.innerHTML = renderLoader();
+    listElement.appendChild(renderLoader('medium'));
 
     const filenames = await endpoints.getAllFilesFromStorage();
     
@@ -44,7 +45,8 @@ async function onFetchFileContent (event) {
         
         const displayElement = document.getElementById('storage_display');
         
-        displayElement.innerHTML = 'Loading';
+        displayElement.innerHTML = '';
+        displayElement.appendChild(renderLoader('medium'));
         displayElement.classList.add('storage_display--no-file');
         
         const filename = target.getAttribute('name');

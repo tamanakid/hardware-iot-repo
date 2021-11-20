@@ -21,6 +21,35 @@ h1 {
 	align-items: center;
 }
 
+.loader {
+	margin: 1em 2em; 
+	border-radius: 50%;
+	animation: spin 2s linear infinite;
+}
+.loader-large {
+	width: 90px;
+	height: 90px;
+	border: 12px solid #f3f3f3;
+	border-top: 12px solid #3498db;
+}
+.loader-medium {
+	width: 50px;
+	height: 50px;
+	border: 6px solid #f3f3f3;
+	border-top: 6px solid #3498db;
+}
+.loader-small {
+	width: 20px;
+	height: 20px;
+	border: 3px solid #f3f3f3;
+	border-top: 3px solid #3498db;
+	margin: 0 1em;
+}
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
 section#header {
 	grid-area: header;
 	display: flex;
@@ -85,6 +114,10 @@ section#container {
 	display: none;
 }
 
+.content_info--hide-measures > .measure {
+	display: none;
+}
+
 
 .measure {
 	display: flex;
@@ -100,11 +133,14 @@ section#container {
 	font-size: 18px;
 }
 .measure_value {
+	display: flex;
+	align-items: center;
 	font-size: 1.5em;
 	padding-left: 1.5rem;
 }
 .measure_value > .measure_value_units {
 	font-size: 20px;
+	padding-left: 0.4em;
 }
 
 .measure_comp {
