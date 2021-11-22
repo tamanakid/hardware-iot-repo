@@ -46,14 +46,14 @@
     <!-- container Temperature -->
     <section class="content" id="content_temperature">
 
-      <div class="content_info content_info--hide-measures" id="temperature_content_info">
+      <div class="content_info content_info--hide-measures">
 
         <div class="measure">
           <label>Current Value</label>
           <div class="measure_value">
             <span id="measure_temp_current"></span>
             <span class="measure_value_units">ºC</span>
-            <span id="loader_temp_current"></span>
+            <span class="loader_current"></span>
           </div>
           <div class="measure_comp">
             <div class="meaure_comp_timestamp">
@@ -216,13 +216,14 @@
       <!-- container Humidity: Could be dynamically generated! -->
     <section class="content content--hidden" id="content_humidity">
 
-      <div class="content_info">
+      <div class="content_info content_info--hide-measures">
 
         <div class="measure">
           <label>Current Value</label>
           <div class="measure_value">
-            <span>48</span>
+            <span id="measure_humidity_current"></span>
             <span class="measure_value_units">%</span>
+            <span class="loader_current"></span>
           </div>
           <div class="measure_comp">
             <div class="meaure_comp_timestamp">
@@ -230,7 +231,7 @@
                 <path d="M0 0h24v24H0V0z" fill="none"/>
                 <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
               </svg>
-              17:51:08
+              <span id="measure_humidity_current_timestamp"></span>
             </div>
           </div>
         </div>
@@ -241,7 +242,7 @@
           <ul>
             <li>
               <div class="measure_value">
-                <span>44</span>
+                <span id="measure_humidity_mean0"></span>
                 <span class="measure_value_units">%</span>
               </div>
               <div class="measure_comp">
@@ -250,14 +251,14 @@
                     <path d="M0 0h24v24H0V0z" fill="none"/>
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  17:50:33
+                  <span id="measure_humidity_mean0_timestamp"></span>
                 </div>
               </div>
             </li>
 
             <li>
               <div class="measure_value">
-                <span>41</span>
+                <span id="measure_humidity_mean1"></span>
                 <span class="measure_value_units">%</span>
               </div>
               <div class="measure_comp">
@@ -266,14 +267,14 @@
                     <path d="M0 0h24v24H0V0z" fill="none"/>
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  17:49:33
+                  <span id="measure_humidity_mean1_timestamp"></span>
                 </div>
               </div>
             </li>
 
             <li>
               <div class="measure_value">
-                <span>47</span>
+                <span id="measure_humidity_mean2"></span>
                 <span class="measure_value_units">%</span>
               </div>
               <div class="measure_comp">
@@ -282,7 +283,7 @@
                     <path d="M0 0h24v24H0V0z" fill="none"/>
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  17:48:33
+                  <span id="measure_humidity_mean2_timestamp"></span>
                 </div>
               </div>
             </li>
@@ -295,7 +296,7 @@
           <ul>
             <li>
               <div class="measure_value">
-                <span>68</span>
+                <span id="measure_humidity_max"></span>
                 <span class="measure_value_units">%</span>
               </div>
               <div class="measure_comp">
@@ -305,14 +306,14 @@
                     <path d="M0 0h24v24H0V0z" fill="none"/>
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  09/11/2021 19:13:46
+                  <span id="measure_humidity_max_timestamp"></span>
                 </div>
               </div>
             </li>
 
             <li>
               <div class="measure_value">
-                <span>21</span>
+                <span id="measure_humidity_min"></span>
                 <span class="measure_value_units">%</span>
               </div>
               <div class="measure_comp">
@@ -322,14 +323,13 @@
                     <path d="M0 0h24v24H0V0z" fill="none"/>
                     <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
                   </svg>
-                  09/11/2021 14:11:55
+                  <span id="measure_humidity_min_timestamp"></span>
                 </div>
               </div>
             </li>
 
           </ul>
         </div>
-
 
       </div>
 
