@@ -9,7 +9,6 @@ const fileIcon = `
 async function onFetchStorageFiles () {
     const listElement = document.getElementById('storage_nav_list');
     
-    // listElement.innerHTML = renderLoader();
     listElement.appendChild(renderLoader('medium'));
 
     const filenames = await endpoints.getAllFilesFromStorage();
@@ -73,6 +72,28 @@ function onMountStorage () {
 
     onFetchStorageFiles();
 }
+
+
+
+async function onStorageDelete () {
+    const isAcceptDelete = confirm('Are you sure you want to delete the entire flash?');
+
+    if (isAcceptDelete) {
+        const listElement = document.getElementById('storage_nav_list');
+        listElement.appendChild(renderLoader('medium'));
+
+        await endpoints.deleteFlash();
+
+        listElement.innerHTML = '';
+        
+        // in the end
+        await onFetchStorageFiles();
+    }
+
+}
+
+const storageDeleteEl = document.getElementById('storage_delete');
+storageDeleteEl.addEventListener('click', onStorageDelete);
 
 /**
  * Pending functionality:

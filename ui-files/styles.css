@@ -233,12 +233,36 @@ section#container {
 
 
 .content#content_storage {
-	grid-template-columns: 1fr 3fr;
+	grid-template-columns: 2fr 5fr;
 }
 
 .storage_nav {
 	display: flex;
 	flex-direction: column;
+}
+
+.storage_nav_title {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.storage_nav_delete {
+	display: flex;
+	color: #004;
+	font-size: 0.8em;
+	border: 1px solid #004;
+	border-radius: 1em;
+	margin-right: 0.5em;
+	padding: 0.5em;
+}
+.storage_nav_delete:hover {
+	background: #004;
+	color: #ccd;
+	cursor: pointer;
+}
+.storage_nav_delete:hover > svg {
+	fill: #ccd;
 }
 
 .storage_nav #storage_nav_list {

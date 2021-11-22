@@ -58,6 +58,7 @@ function getMeasurementValues () {
 
 
 
+/** Storage endpoints */
 
 function getAllFilesFromStorage () {
     const endpointUrl = '/storage';
@@ -75,7 +76,6 @@ function getAllFilesFromStorage () {
         }, 2000);
     });
 }
-
 
 
 
@@ -100,9 +100,24 @@ function getFileFromStorage (filename) {
 
 
 
+async function deleteFlash () {
+    const endpointUrl = `/delete-flash`;
+
+    const response = {
+        success: true,
+    };
+
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(response);
+        }, 4000);
+    });
+}
+
 
 const endpoints = {
     getMeasurementValues,
     getAllFilesFromStorage,
     getFileFromStorage,
+    deleteFlash,
 };
