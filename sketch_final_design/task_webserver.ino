@@ -15,6 +15,7 @@ extern ESP8266WebServer server;
 
 String indexHTML;
 String stylesCSS;
+String scriptJS;
 
 
 void setupWebServer() {
@@ -28,17 +29,22 @@ void setupWebServer() {
     Serial.println("Error reading 'index.html' from flash.");
     return;
   }
-  Serial.print("File length:");
-  Serial.println(indexHTML.length());
   
   stylesCSS = fileRead("/styles.css");
   if (stylesCSS.equals("Error")){
     Serial.println("Error reading 'styles.css' from flash.");
     return;
   }
+
+  scriptJS = fileRead("/script.js");
+  if (scriptJS.equals("Error")){
+    Serial.println("Error reading 'script.js' from flash.");
+    return;
+  }
   
   server.on("/index.html", handleIndex);
   server.on("/styles.css", handleStyles);
+  server.on("/script.js", handleScriptJS);
   // server.on("/set-alarm", handleSetAlarm);
   // server.on("/set-light-threshold", handleSetLightThreshold);
   server.on("/", []() {
@@ -116,6 +122,11 @@ void handleStyles () {
   handleFile(&stylesCSS, file_length, "text/css;charset=UTF-8");
 }
 
+void handleScriptJS () {
+  Serial.println("Sending script.js");
+  int file_length = scriptJS.length();
+  handleFile(&scriptJS, file_length, "application/javascript;charset=UTF-8");
+}
 
 
 
