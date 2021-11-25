@@ -45,8 +45,9 @@ void setupWebServer() {
   server.on("/index.html", handleIndex);
   server.on("/styles.css", handleStyles);
   server.on("/script.js", handleScriptJS);
-  // server.on("/set-alarm", handleSetAlarm);
-  // server.on("/set-light-threshold", handleSetLightThreshold);
+  
+  server.on("/api/test", handleApiTest);
+  
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
     server.send(302, "text/plain", "");
@@ -128,6 +129,15 @@ void handleScriptJS () {
   handleFile(&scriptJS, file_length, "application/javascript;charset=UTF-8");
 }
 
+
+
+void handleApiTest () {
+  char json[100];
+
+  strcpy(json, "{\"test-1\": 5, \"test-2\": \"22/11/2021\"}");
+
+  server.send(200, "application/json", json);
+}
 
 
 void handleNotFound() {
