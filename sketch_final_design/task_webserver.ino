@@ -76,19 +76,23 @@ void handleHome() {
     
   for (int i = 0; i*chunk_size < indexHTML.length(); i++) {
     String chunk;
+    char content_buffer[chunk_size];
+    int content_size;
+    
     if (i*chunk_size < (indexHTML.length() - chunk_size)) {
       chunk = indexHTML.substring(i*chunk_size, i*chunk_size + chunk_size);
+      content_size = chunk_size;
     } else {
       chunk = indexHTML.substring(i*chunk_size);
+      content_size = indexHTML.length() - i*chunk_size;
     }
-
-    char content_buffer[chunk_size];
+    
     strcpy(content_buffer, chunk.c_str());
 
     // Serial.println("chunk:");
     Serial.println(content_buffer);
 
-    server.sendContent_P(content_buffer, chunk_size);
+    server.sendContent_P(content_buffer, content_size);
   }
 
   Serial.println("Index file sent!");
