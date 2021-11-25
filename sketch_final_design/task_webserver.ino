@@ -28,12 +28,21 @@ void setupWebServer() {
     Serial.println("Error reading 'index.html' from flash.");
     return;
   }
+  Serial.print("File length:");
+  Serial.println(indexHTML.length());
   
-  server.on("/home", handleHome);
+  stylesCSS = fileRead("/styles.css");
+  if (stylesCSS.equals("Error")){
+    Serial.println("Error reading 'styles.css' from flash.");
+    return;
+  }
+  
+  server.on("/index.html", handleIndex);
+  server.on("/styles.css", handleStyles);
   // server.on("/set-alarm", handleSetAlarm);
   // server.on("/set-light-threshold", handleSetLightThreshold);
   server.on("/", []() {
-    server.sendHeader("Location", String("/home"), true);
+    server.sendHeader("Location", String("/index.html"), true);
     server.send(302, "text/plain", "");
   });
   
@@ -59,32 +68,28 @@ void resetWebServer() {
 }
 
 
-void handleHome() {
+void handleFile(String *file_content, int file_length, String content_type) {
   const int chunk_size = 500;
-  // char content[20000];
-
-  // strcpy(content, indexHTML.c_str());
-  // snprintf(temp,1000,temp1,hr, min % 60, sec % 60,  Vumbral, normalizar(valor_medio));
-
-  Serial.println("Sending index file to client");
 
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
 
-  // int file_length = indexHTML.length();
-  server.sendHeader("Content-Length", (String)indexHTML.length());
-  server.send(200, "text/html", "");
+  Serial.print("File length: ");
+  Serial.println(file_length);
+  
+  server.sendHeader("Content-Length", (String)file_length);
+  server.send(200, content_type, "");
     
-  for (int i = 0; i*chunk_size < indexHTML.length(); i++) {
+  for (int i = 0; i*chunk_size < file_length; i++) {
     String chunk;
     char content_buffer[chunk_size];
     int content_size;
     
-    if (i*chunk_size < (indexHTML.length() - chunk_size)) {
-      chunk = indexHTML.substring(i*chunk_size, i*chunk_size + chunk_size);
+    if (i*chunk_size < (file_length - chunk_size)) {
+      chunk = file_content->substring(i*chunk_size, i*chunk_size + chunk_size);
       content_size = chunk_size;
     } else {
-      chunk = indexHTML.substring(i*chunk_size);
-      content_size = indexHTML.length() - i*chunk_size;
+      chunk = file_content->substring(i*chunk_size);
+      content_size = file_length - i*chunk_size;
     }
     
     strcpy(content_buffer, chunk.c_str());
@@ -95,10 +100,20 @@ void handleHome() {
     server.sendContent_P(content_buffer, content_size);
   }
 
-  Serial.println("Index file sent!");
-  
-  // server.send_P(200, "text/html", content);
-  // text/css;charset=UTF-8
+  Serial.println("File sent!");
+}
+
+
+void handleIndex () {
+  Serial.println("Sending index.html");
+  int file_length = indexHTML.length();
+  handleFile(&indexHTML, file_length, "text/html");
+}
+
+void handleStyles () {
+  Serial.println("Sending styles.css");
+  int file_length = stylesCSS.length();
+  handleFile(&stylesCSS, file_length, "text/css;charset=UTF-8");
 }
 
 

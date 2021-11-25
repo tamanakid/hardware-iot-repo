@@ -21,7 +21,9 @@ String fileRead (String fileURI) {
       return "Error";
     }
 
-    Serial.println("Reading file...");
+    Serial.print("Reading file: ");
+    Serial.print(fileURI);
+    Serial.println(" ");
     while (file.available()) {
       myString += file.readStringUntil('\n');
     }

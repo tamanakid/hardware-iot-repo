@@ -19,6 +19,7 @@ t_global_state state = {
     hours: 0,
     minutes: 0,
     seconds: 0,
+    epoch: 0,
   }
   /*
   measures: {
