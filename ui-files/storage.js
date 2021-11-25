@@ -94,12 +94,3 @@ async function onStorageDelete () {
 
 const storageDeleteEl = document.getElementById('storage_delete');
 storageDeleteEl.addEventListener('click', onStorageDelete);
-
-/**
- * Pending functionality:
- * 1. Refresh content button (both for list and file-content)
- * 2. Remove content from DOM while loading/refreshing (And remove event listener)
- * 3. Create reusable loader
- */
-
-

@@ -121,3 +121,12 @@ const endpoints = {
     getFileFromStorage,
     deleteFlash,
 };
+
+
+
+/**
+ * Pending functionality:
+ * - Make loader occupy full temperature and humidity pages
+ * - Make localhost-based temperature units selection
+ * - Validate (and "filter" i.e. decimals) inputs for thresholds and cadences
+ */
