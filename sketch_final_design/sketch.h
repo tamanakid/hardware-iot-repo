@@ -42,8 +42,14 @@ typedef struct {
   bool is_server_active;
   float temperature;
   int humidity;
+  float temperature_mean_current;
+  int temperature_mean_count;
+  int humidity_mean_current;
+  int humidity_mean_count;
   float temperature_means[3];
-  float humidity_means[3];
+  int humidity_means[3];
+  int temperature_rate;
+  int humidity_rate;
   bool is_temperature_alarm;
   bool is_humidity_alarm;
   t_time timestamp;
@@ -56,25 +62,32 @@ void updateScheduler(t_scheduler_action action);
 
 void setupWifiConnect(void);
 void setupWebServer(void);
-void setupMeasurements(void);
+void setupTemperature(void);
+void setupHumidity(void);
 void setupClock(void);
 
 void taskWifiConnect(void);
 void taskWebServer(void);
-void taskMeasurements(void);
+void taskTemperature(void);
+void taskHumidity(void);
 void taskClock(void);
 
 void resetWifiConnect(void);
 void resetWebServer(void);
-void resetMeasurements(void);
+void resetTemperature(void);
+void resetHumidity(void);
 void resetClock(void);
+
+void temperatureMeanReadAndReset(void);
+void humidityMeanReadAndReset(void);
 
 /* Global reference variables */
 
-extern schedulerTask *task_wifi_connect, *task_web_server, *task_measurements, *task_clock;
+extern schedulerTask *task_wifi_connect, *task_web_server, *task_measurements, *task_humidity, *task_clock;
 
 extern ESP8266WebServer server;
 extern WiFiUDP UdpInstance;
+extern SHT21 Sht;
 extern t_global_state state;
 
 

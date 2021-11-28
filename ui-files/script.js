@@ -12,54 +12,15 @@ function onRequest(endpoint, callback) {
 
 
 function getMeasurementValues () {
-	const endpointUrl = '/measurements';
+    const endpointUrl = `/api/temperature`;
 
-	const response = {
-			temperature: {
-					current: {
-							value: (10 + Math.random()*20).toFixed(1),
-							timestamp: '09/06/2021 - 17:51:33'
-					},
-					means: [
-							{ value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
-							{ value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
-							{ value: (10 + Math.random()*20).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
-					],
-					recordMax: {
-							value: (30 + Math.random()*5).toFixed(1),
-							timestamp: '09/06/2021 - 17:46:38'
-					},
-					recordMin: {
-							value: (5 + Math.random()*5).toFixed(1),
-							timestamp: '08/06/2021 - 17:46:38'
-					},
-			},
-			humidity: {
-					current: {
-							value: (30 + Math.random()*30).toFixed(1),
-							timestamp: '09/06/2021 - 17:51:33'
-					},
-					means: [
-							{ value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:51:08' },
-							{ value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:50:08' },
-							{ value: (30 + Math.random()*30).toFixed(1), timestamp: '09/06/2021 - 17:49:08' },
-					],
-					recordMax: {
-							value: (60 + Math.random()*10).toFixed(1),
-							timestamp: '09/06/2021 - 17:46:38'
-					},
-					recordMin: {
-							value: (15 + Math.random()*15).toFixed(1),
-							timestamp: '08/06/2021 - 17:46:38'
-					},
-			},
-	};
-
-	return new Promise((resolve, reject) => {
-			setTimeout(() => {
-					resolve(response);
-			}, 1500);
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, function (response) {
+			resolve(response);
+		});
 	});
+
+	return promise;
 }
 
 /** Storage endpoints */
@@ -89,7 +50,7 @@ function getFileFromStorage (filename) {
 		onRequest(endpointUrl, function (response) {
 			resolve(response['test-1']);
 		});
-	})
+	});
 
 	return promise;
 }
@@ -167,7 +128,7 @@ async function renderMeasurementValues () {
         isAJAXCallInProgress = false;
     
         renderTabMeasurements(measurements.temperature, 'temp');
-        renderTabMeasurements(measurements.humidity, 'humidity');
+        // renderTabMeasurements(measurements.humidity, 'humidity');
     }
 }
 

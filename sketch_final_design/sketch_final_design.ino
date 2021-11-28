@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include <SHT21.h>
 
 #include "hardware_d1mini.h"
 #include "scheduler.h"
@@ -7,12 +8,20 @@
 #include "ssid.h"
 
 
+SHT21 Sht;
+
 t_global_state state = {
   is_server_active: false,
   temperature: 0,
   humidity: 0,
+  temperature_mean_current: 0,
+  temperature_mean_count: 0,
+  humidity_mean_current: 0,
+  humidity_mean_count: 0,
   temperature_means: { 0, 0, 0 },
   humidity_means: { 0, 0, 0 },
+  temperature_rate: 5,
+  humidity_rate: 5,
   is_temperature_alarm: false,
   is_humidity_alarm: false,
   timestamp: {
@@ -30,7 +39,7 @@ t_global_state state = {
 };
 
 
-schedulerTask *task_wifi_connect, *task_web_server, *task_measurements, *task_clock;
+schedulerTask *task_wifi_connect, *task_web_server, *task_temperature, *task_humidity, *task_clock;
 
 
 void setup() {
@@ -43,13 +52,15 @@ void setup() {
   Serial.println("RESET: Running setup function.");
   
   setupWifiConnect();
-  setupMeasurements();
+  setupTemperature();
+  setupHumidity();
 
   task_wifi_connect = scheduler_add(5, &taskWifiConnect, true);
   task_web_server = scheduler_add(1, &taskWebServer, false);
 
   // TODO: Read actual rate from config file
-  task_measurements = scheduler_add(50, &taskMeasurements, false);
+  task_temperature = scheduler_add(50, &taskTemperature, false);
+  task_humidity = scheduler_add(50, &taskHumidity, false);
   task_clock = scheduler_add(10, &taskClock, false);
 }
 
@@ -74,17 +85,20 @@ void updateScheduler (t_scheduler_action action) {
       setupWebServer();
       setupClock();
       scheduler_activate(task_web_server);
-      scheduler_activate(task_measurements);
+      scheduler_activate(task_temperature);
+      scheduler_activate(task_humidity);
       scheduler_activate(task_clock);
       break;
 
     case ACTION_ON_DISCONNECTED:
       Serial.println(">> Action: Disconnected");
       scheduler_deactivate(task_web_server);
-      scheduler_deactivate(task_measurements);
+      scheduler_deactivate(task_temperature);
+      scheduler_deactivate(task_humidity);
       scheduler_deactivate(task_clock);
-      resetMeasurements();
       resetWebServer();
+      resetTemperature();
+      resetHumidity();
       resetClock();
       break;
   }

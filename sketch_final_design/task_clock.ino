@@ -30,6 +30,8 @@ void taskClock() {
   if (state.timestamp.seconds == 60) {
     state.timestamp.seconds = 0;
     state.timestamp.minutes = state.timestamp.minutes + 1;
+    temperatureMeanReadAndReset();
+    humidityMeanReadAndReset();
   }
 
   if (state.timestamp.minutes == 60) {

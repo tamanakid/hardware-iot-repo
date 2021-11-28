@@ -47,6 +47,7 @@ void setupWebServer() {
   server.on("/script.js", handleScriptJS);
   
   server.on("/api/test", handleApiTest);
+  server.on("/api/temperature", handleTemperatureRequest);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -54,12 +55,15 @@ void setupWebServer() {
   });
   
   server.onNotFound(handleNotFound);
+
+  Serial.println("task:webServer> Setup complete");
   // server.begin();
 }
 
 
 void taskWebServer() {
   if (!state.is_server_active) {
+    Serial.println("task:webServer> Server started.");
     server.begin();
     state.is_server_active = true;
   }
@@ -138,6 +142,52 @@ void handleApiTest () {
 
   server.send(200, "application/json", json);
 }
+
+
+void handleTemperatureRequest () {
+  char json[1000];
+
+  sprintf(json,
+    "{\"temperature\": { \"current\": { \"value\": %2.1f }, \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }] },\
+    \"humidity\": { \"current\": { \"value\": %d }, \"means\": [{ \"value\": %d }, { \"value\": %d }, { \"value\": %d }] }}\
+    ",
+    state.temperature,
+    state.temperature_means[0],
+    state.temperature_means[1],
+    state.temperature_means[2],
+    state.humidity,
+    state.humidity_means[0],
+    state.humidity_means[1],
+    state.humidity_means[2]
+  );
+
+  server.send(200, "application/json", json);
+}
+
+
+// TODO: separate temperature and humidity requests in client-side code
+void handleHumidityRequest () {
+  char json[500];
+
+  sprintf(json,
+    "{\"humidity\": { \"current\": { \"value\": %2.1f }, \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }] }}",
+    state.humidity,
+    state.humidity_means[0],
+    state.humidity_means[1],
+    state.humidity_means[2]
+  );
+
+  server.send(200, "application/json", json);
+}
+
+
+
+extern schedulerTask *task_temperature, *task_humidity;
+
+void handleChangeTemperatureRate () {
+  
+}
+
 
 
 void handleNotFound() {
