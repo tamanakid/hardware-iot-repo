@@ -45,9 +45,11 @@ void setupWebServer() {
   server.on("/index.html", handleIndex);
   server.on("/styles.css", handleStyles);
   server.on("/script.js", handleScriptJS);
-  
-  server.on("/api/test", handleApiTest);
-  server.on("/api/temperature", handleTemperatureRequest);
+
+  server.on("/api/temp", handleTemperatureRequest);
+  server.on("/api/humidity", handleHumidityRequest);
+
+  server.on("/api/temp/rate", handleChangeTemperatureRate);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -135,57 +137,72 @@ void handleScriptJS () {
 
 
 
-void handleApiTest () {
-  char json[100];
-
-  strcpy(json, "{\"test-1\": 5, \"test-2\": \"22/11/2021\"}");
-
-  server.send(200, "application/json", json);
-}
+extern schedulerTask *task_temperature, *task_humidity;
 
 
 void handleTemperatureRequest () {
   char json[1000];
 
   sprintf(json,
-    "{\"temperature\": { \"current\": { \"value\": %2.1f }, \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }] },\
-    \"humidity\": { \"current\": { \"value\": %d }, \"means\": [{ \"value\": %d }, { \"value\": %d }, { \"value\": %d }] }}\
-    ",
-    state.temperature,
-    state.temperature_means[0],
-    state.temperature_means[1],
-    state.temperature_means[2],
-    state.humidity,
-    state.humidity_means[0],
-    state.humidity_means[1],
-    state.humidity_means[2]
+    "{\
+    \"current\": { \"value\": %2.1f, \"timestamp\": \"%s\"  },\
+    \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }],\
+    \"config\": { \"rate\": %d, \"threshold\": %2.1f },\
+    \"alarm\": %s\
+    }",
+    state.temperature.current.value,
+    state.temperature.current.timestamp,
+    state.temperature.means[0],
+    state.temperature.means[1],
+    state.temperature.means[2],
+    task_temperature->schedule_ticks / 10,
+    state.temperature.threshold,
+    state.temperature.is_alarm ? "true" : "false"
   );
 
   server.send(200, "application/json", json);
 }
 
 
-// TODO: separate temperature and humidity requests in client-side code
 void handleHumidityRequest () {
   char json[500];
 
   sprintf(json,
-    "{\"humidity\": { \"current\": { \"value\": %2.1f }, \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }] }}",
-    state.humidity,
-    state.humidity_means[0],
-    state.humidity_means[1],
-    state.humidity_means[2]
+    "{\
+    \"current\": { \"value\": %d, \"timestamp\": \"%s\"  },\
+    \"means\": [{ \"value\": %d }, { \"value\": %d }, { \"value\": %d }],\
+    \"config\": { \"rate\": %d, \"threshold\": %d },\
+    \"alarm\": %s\
+    }",
+    state.humidity.current.value,
+    state.humidity.current.timestamp,
+    state.humidity.means[0],
+    state.humidity.means[1],
+    state.humidity.means[2],
+    task_humidity->schedule_ticks / 10,
+    state.humidity.threshold,
+    state.humidity.is_alarm ? "true" : "false"
   );
 
   server.send(200, "application/json", json);
 }
 
 
-
-extern schedulerTask *task_temperature, *task_humidity;
-
 void handleChangeTemperatureRate () {
+  char json[500];
   
+  if (server.hasArg("value")) {
+    int new_rate = server.arg("value").toInt();
+    
+    task_temperature->schedule_ticks = new_rate*10;
+    
+    sprintf(json, "{ \"success\": true, \"value\": %d }", new_rate);
+  } else {
+    int seconds = task_temperature->schedule_ticks / 10;
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", seconds);
+  }
+
+  server.send(200, "application/json", json);
 }
 
 

@@ -20,15 +20,15 @@ void taskHumidity () {
     initial_write = true;
   }
 
-  Serial.println("task:temperature> Reading humidity...");
+  // Serial.println("task:temperature> Reading humidity...");
   
   int humidity_read = Sht.getHumidity();
   
-  state.humidity = humidity_read;
-  humidityMeanRecalculate(state.humidity);
+  state.humidity.current.value = humidity_read;
+  humidityMeanRecalculate(state.humidity.current.value);
 
   Serial.print("task:humidity> Humidity read: ");
-  Serial.println(state.humidity);
+  Serial.println(state.humidity.current.value);
 }
 
 
@@ -38,20 +38,20 @@ void resetHumidity () {
 
 
 void humidityMeanRecalculate (int last_value) {
-  state.humidity_mean_count++;
+  state.humidity.mean_count++;
 
-  state.humidity_mean_current = ((state.humidity_mean_count - 1)*state.humidity_mean_current + last_value) / state.humidity_mean_count;
+  state.humidity.mean_current = ((state.humidity.mean_count - 1)*state.humidity.mean_current + last_value) / state.humidity.mean_count;
 }
 
 
 void humidityMeanReadAndReset () {
-  state.humidity_means[2] = state.humidity_means[1];
-  state.humidity_means[1] = state.humidity_means[0];
-  state.humidity_means[0] = state.humidity_mean_current;
+  state.humidity.means[2] = state.humidity.means[1];
+  state.humidity.means[1] = state.humidity.means[0];
+  state.humidity.means[0] = state.humidity.mean_current;
 
   Serial.print("task:humidity> New humidity mean: ");
-  Serial.println(state.humidity_mean_current);
+  Serial.println(state.humidity.mean_current);
     
-  state.humidity_mean_count = 0;
-  state.humidity_mean_current = 0;
+  state.humidity.mean_count = 0;
+  state.humidity.mean_current = 0;
 }

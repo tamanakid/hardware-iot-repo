@@ -11,19 +11,45 @@
 SHT21 Sht;
 
 t_global_state state = {
+  temperature: {
+    current: {
+      value: NULL,
+      timestamp: "",
+    },
+    mean_current: 0,
+    mean_count: 0,
+    means: { NULL, NULL, NULL },
+    record_min: {
+      value: NULL,
+      timestamp: "",
+    },
+    record_max: {
+      value: NULL,
+      timestamp: "",
+    },
+    threshold: 30,
+    is_alarm: false,
+  },
+  humidity: {
+    current: {
+      value: 0,
+      timestamp: "",
+    },
+    mean_current: 0,
+    mean_count: 0,
+    means: { 0, 0, 0 },
+    record_min: {
+      value: NULL,
+      timestamp: "",
+    },
+    record_max: {
+      value: NULL,
+      timestamp: "",
+    },
+    threshold: 50,
+    is_alarm: false,
+  },
   is_server_active: false,
-  temperature: 0,
-  humidity: 0,
-  temperature_mean_current: 0,
-  temperature_mean_count: 0,
-  humidity_mean_current: 0,
-  humidity_mean_count: 0,
-  temperature_means: { 0, 0, 0 },
-  humidity_means: { 0, 0, 0 },
-  temperature_rate: 5,
-  humidity_rate: 5,
-  is_temperature_alarm: false,
-  is_humidity_alarm: false,
   timestamp: {
     hours: 0,
     minutes: 0,

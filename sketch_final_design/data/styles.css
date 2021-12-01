@@ -114,7 +114,10 @@ section#container {
 	display: none;
 }
 
-.content_info--hide-measures > .measure {
+.content--loading > .content_info {
+	display: none;
+}
+.content--loading > .content_config {
 	display: none;
 }
 

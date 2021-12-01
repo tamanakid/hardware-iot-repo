@@ -20,15 +20,15 @@ void taskTemperature() {
     initial_write = true;
   }
 
-  Serial.println("task:temperature> Reading temperature...");
+  // Serial.println("task:temperature> Reading temperature...");
   
   float temperature_read = Sht.getTemperature();
   
-  state.temperature = ((float)((int)(temperature_read * 10))) / 10;
-  temperatureMeanRecalculate(state.temperature);
+  state.temperature.current.value = ((float)((int)(temperature_read * 10))) / 10;
+  temperatureMeanRecalculate(state.temperature.current.value);
 
   Serial.print("task:temperature> Temperature read: ");
-  Serial.println(state.temperature);
+  Serial.println(state.temperature.current.value);
 }
 
 
@@ -38,21 +38,21 @@ void resetTemperature() {
 
 
 void temperatureMeanRecalculate (float last_value) {
-  state.temperature_mean_count++;
+  state.temperature.mean_count++;
 
-  state.temperature_mean_current = ((state.temperature_mean_count - 1)*state.temperature_mean_current + last_value) / state.temperature_mean_count;
+  state.temperature.mean_current = ((state.temperature.mean_count - 1)*state.temperature.mean_current + last_value) / state.temperature.mean_count;
 }
 
 
 void temperatureMeanReadAndReset () {
-  state.temperature_means[2] = state.temperature_means[1];
-  state.temperature_means[1] = state.temperature_means[0];
-  state.temperature_means[0] = state.temperature_mean_current;
+  state.temperature.means[2] = state.temperature.means[1];
+  state.temperature.means[1] = state.temperature.means[0];
+  state.temperature.means[0] = state.temperature.mean_current;
 
   Serial.print("task:temperature> New temperature mean: ");
-  Serial.println(state.temperature_mean_current);
+  Serial.println(state.temperature.mean_current);
   
   
-  state.temperature_mean_count = 0;
-  state.temperature_mean_current = 0;
+  state.temperature.mean_count = 0;
+  state.temperature.mean_current = 0;
 }

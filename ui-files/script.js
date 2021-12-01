@@ -1,4 +1,4 @@
-function onRequest(endpoint, callback) {
+function onRequest(endpoint, headers, callback) {
 	function reqListener () {
 		callback(JSON.parse(this.responseText));
 		// removeEventListener after callback?
@@ -6,16 +6,31 @@ function onRequest(endpoint, callback) {
 	
 	var oReq = new XMLHttpRequest();
 	oReq.addEventListener("load", reqListener);
-	oReq.open("GET", endpoint);
-	oReq.send();
+	oReq.open(headers.method, endpoint);
+    if (headers.params) {
+        oReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    }
+    oReq.send(headers.params || null);
 }
 
 
-function getMeasurementValues () {
-    const endpointUrl = `/api/temperature`;
+function getMeasurementValues (tab) {
+    const endpointUrl = `/api/${tab}`;
 
 	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, function (response) {
+		onRequest(endpointUrl, { method: "GET" }, function (response) {
+			resolve(response);
+		});
+	});
+
+	return promise;
+}
+
+function changeRate (tab, params) {
+    const endpointUrl = `/api/${tab}/rate`;
+
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "POST", params }, function (response) {
 			resolve(response);
 		});
 	});
@@ -47,7 +62,7 @@ function getFileFromStorage (filename) {
 	const endpointUrl = `/api/test`;
 
 	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, function (response) {
+		onRequest(endpointUrl, { method: "GET" }, function (response) {
 			resolve(response['test-1']);
 		});
 	});
@@ -72,6 +87,7 @@ async function deleteFlash () {
 
 const endpoints = {
 	getMeasurementValues,
+    changeRate,
 	getAllFilesFromStorage,
 	getFileFromStorage,
 	deleteFlash,
@@ -80,118 +96,133 @@ const endpoints = {
 
 
 
-function renderLoader(size) {
+function renderLoader(size, tab) {
 	const loaderEl = document.createElement('div');
 
 	loaderEl.classList.add('loader');
 	loaderEl.classList.add(`loader-${size}`);
+    loaderEl.classList.add(`loader_${tab}`);
 
 	return loaderEl;
 }
 
 
 
-
-let currentInterval = undefined;
+let intervalRates = {
+    temp: undefined,
+    humidity: undefined,
+};
+let poolingIntervalIDs = {
+    temp: undefined,
+    humidity: undefined,
+};
 
 let isFirstCall = true;
 let isAJAXCallInProgress = false;
 
-async function renderMeasurementValues () {
+async function renderMeasurementValues (tab) {
     if (!isAJAXCallInProgress) {
         isAJAXCallInProgress = true;
 
-        let loaderElements;
+        let loaderElement;
         if (isFirstCall) {
-            loaderElements = document.getElementsByClassName('content_info');
-            loaderElements[0].appendChild(renderLoader('large'));
-            loaderElements[1].appendChild(renderLoader('large'));
+            loaderElement = document.querySelector(`.content--loading#content_${tab}`);
+            loaderElement.appendChild(renderLoader('large', tab));
         } else {
-            loaderElements = document.getElementsByClassName('loader_current');
-            loaderElements[0].appendChild(renderLoader('small'));
-            loaderElements[1].appendChild(renderLoader('small'));
+            loaderElement = document.getElementsByClassName(`loader_current_${tab}`)[0];
+            if (loaderElement) {
+                loaderElement.appendChild(renderLoader('small', tab));
+            }
         }
     
-        const measurements = await endpoints.getMeasurementValues();
+        const measures = await endpoints.getMeasurementValues(tab);
     
         if (isFirstCall) {
-            for (let i = 0; i < loaderElements.length; i++) {
-                loaderElements[i].classList.remove('content_info--hide-measures');
-                const firstCallLoader = loaderElements[i].getElementsByClassName('loader')[0];
+            loaderElement.classList.remove('content--loading');
+            const firstCallLoader = loaderElement.getElementsByClassName(`loader loader_${tab}`)[0];
+            if (firstCallLoader) {
                 firstCallLoader.remove();
             }
             isFirstCall = false;
         } else {
-            loaderElements[0].innerHTML = '';
-            loaderElements[1].innerHTML = '';
+            loaderElement.innerHTML = '';
         }
         isAJAXCallInProgress = false;
     
-        renderTabMeasurements(measurements.temperature, 'temp');
-        // renderTabMeasurements(measurements.humidity, 'humidity');
+        renderTabMeasurements(measures, tab);
+
+        if (intervalRates[tab] !== measures.config.rate) {
+            onSetCurrentInterval(tab, measures.config.rate);
+        }
     }
 }
 
 function renderTabMeasurements(tabMeasurements, type) {
     
-    // Temperature: Current value
-    const temperatureCurrentEl = document.getElementById(`measure_${type}_current`);
-    temperatureCurrentEl.innerHTML = tabMeasurements.current.value;
-    const temperatureCurrentTimestampEl = document.getElementById(`measure_${type}_current_timestamp`);
-    temperatureCurrentTimestampEl.innerHTML = tabMeasurements.current.timestamp;
+    // Measurement: Current value
+    const measurementCurrentEl = document.getElementById(`measure_${type}_current`);
+    measurementCurrentEl.innerHTML = tabMeasurements.current.value;
+    const measurementCurrentTimestampEl = document.getElementById(`measure_${type}_current_timestamp`);
+    measurementCurrentTimestampEl.innerHTML = tabMeasurements.current.timestamp;
 
-    // Temperature: Latest means
+    // Measurement: Latest means
     if (tabMeasurements.means) {
         tabMeasurements.means.forEach((mean, index) => {
-            const temperatureMeanEl = document.getElementById(`measure_${type}_mean${index}`);
-            temperatureMeanEl.innerHTML = mean.value;
-            const temperatureMeanTimestampEl = document.getElementById(`measure_${type}_mean${index}_timestamp`);
-            temperatureMeanTimestampEl.innerHTML = mean.timestamp;
+            const measurementMeanEl = document.getElementById(`measure_${type}_mean${index}`);
+            measurementMeanEl.innerHTML = mean.value;
         });
     }
 
-    // Temperature: Record max and min
+    // Measurement: Record max and min
     if (tabMeasurements.recordMax) {
-        const temperatureMaxEl = document.getElementById(`measure_${type}_max`);
-        temperatureMaxEl.innerHTML = tabMeasurements.recordMax.value;
-        const temperatureMaxTimestampEl = document.getElementById(`measure_${type}_max_timestamp`);
-        temperatureMaxTimestampEl.innerHTML = tabMeasurements.recordMax.timestamp;
+        const measurementMaxEl = document.getElementById(`measure_${type}_max`);
+        measurementMaxEl.innerHTML = tabMeasurements.recordMax.value;
+        const measurementMaxTimestampEl = document.getElementById(`measure_${type}_max_timestamp`);
+        measurementMaxTimestampEl.innerHTML = tabMeasurements.recordMax.timestamp;
     }
     if (tabMeasurements.recordMin) {
-        const temperatureMinEl = document.getElementById(`measure_${type}_min`);
-        temperatureMinEl.innerHTML = tabMeasurements.recordMin.value;
-        const temperatureMinTimestampEl = document.getElementById(`measure_${type}_min_timestamp`);
-        temperatureMinTimestampEl.innerHTML = tabMeasurements.recordMin.timestamp;
+        const measurementMinEl = document.getElementById(`measure_${type}_min`);
+        measurementMinEl.innerHTML = tabMeasurements.recordMin.value;
+        const measurementMinTimestampEl = document.getElementById(`measure_${type}_min_timestamp`);
+        measurementMinTimestampEl.innerHTML = tabMeasurements.recordMin.timestamp;
     }
 }
 
-async function renderMeasurementConfig () {
-    // const config = await endpoints.getMeasurementsConfig();
-
-    currentInterval = 5;
+function onSetCurrentInterval(tab, value) {
+    intervalRates[tab] = value;
+    poolingIntervalIDs[tab] = setInterval(() => renderMeasurementValues(tab), intervalRates[tab] * 1000);
 }
 
-
-let poolingIntervalID = undefined;
-
-function defineMeasurementPooling () {
-    poolingIntervalID = setInterval(renderMeasurementValues, currentInterval * 1000);
-
-}
-
-
-function onUpdateCurrentInterval () {
-    // AJAX request
-    currentInterval = Math.floor(Math.random()*10);
+function onUpdateCurrentInterval(tab, value) {
+    intervalRates[tab] = value;
     
-    clearInterval(poolingIntervalID);
-    defineMeasurementPooling();
+    clearInterval(poolingIntervalIDs[tab]);
+    poolingIntervalIDs[tab] = setInterval(() => renderMeasurementValues(tab), intervalRates[tab] * 1000);
 }
 
 
-renderMeasurementValues();
-renderMeasurementConfig();
-defineMeasurementPooling();
+renderMeasurementValues('temp');
+renderMeasurementValues('humidity');
+
+
+
+async function onSubmitRate (tab) {
+    const rateSelector = document.getElementById(`config_${tab}_rate`);
+    const params = `value=${rateSelector.value}`;
+    const response = await endpoints.changeRate('temp', params);
+
+    if (response.success) {
+        onUpdateCurrentInterval(tab, response.value)
+    }
+}
+
+const tempRateSubmitBtn = document.getElementById('config_temp_rate_submit');
+const humiRateSubmitBtn = document.getElementById('config_humi_rate_submit');
+tempRateSubmitBtn.addEventListener('click', () => onSubmitRate('temp'))
+humiRateSubmitBtn.addEventListener('click', () => onSubmitRate('humi'))
+
+
+
 
 
 
@@ -298,7 +329,7 @@ const tabButtons = {
 }
 
 const tabContents = {
-    temperature: document.querySelector('#content_temperature'),
+    temperature: document.querySelector('#content_temp'),
     humidity: document.querySelector('#content_humidity'),
     storage: document.querySelector('#content_storage'),
 }

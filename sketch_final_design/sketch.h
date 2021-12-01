@@ -34,26 +34,44 @@ typedef struct {
 } t_time;
 
 typedef struct {
-  int values[12];
-  int count;
-} t_measures;
+  float value;
+  String timestamp;
+} t_measure_temperature;
 
 typedef struct {
+  int value;
+  String timestamp;
+} t_measure_humidity;
+
+typedef struct {
+  t_measure_temperature current;
+  float mean_current;
+  int mean_count;
+  float means[3];
+  t_measure_temperature record_min;
+  t_measure_temperature record_max;
+  float threshold;
+  bool is_alarm;
+} t_temperature_info;
+
+typedef struct {
+  t_measure_humidity current;
+  int mean_current;
+  int mean_count;
+  int means[3];
+  t_measure_humidity record_min;
+  t_measure_humidity record_max;
+  int threshold;
+  bool is_alarm;
+} t_humidity_info;
+
+
+typedef struct {
+  // Temperature
+  t_temperature_info temperature;
+  t_humidity_info humidity;
   bool is_server_active;
-  float temperature;
-  int humidity;
-  float temperature_mean_current;
-  int temperature_mean_count;
-  int humidity_mean_current;
-  int humidity_mean_count;
-  float temperature_means[3];
-  int humidity_means[3];
-  int temperature_rate;
-  int humidity_rate;
-  bool is_temperature_alarm;
-  bool is_humidity_alarm;
   t_time timestamp;
-  // t_measures measures;
 } t_global_state;
 
 

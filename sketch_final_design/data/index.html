@@ -44,16 +44,16 @@
 
 
     <!-- container Temperature -->
-    <section class="content" id="content_temperature">
+    <section class="content content--loading" id="content_temp">
 
-      <div class="content_info content_info--hide-measures">
+      <div class="content_info">
 
         <div class="measure">
           <label>Current Value</label>
           <div class="measure_value">
             <span id="measure_temp_current"></span>
             <span class="measure_value_units">&deg;C</span>
-            <span class="loader_current"></span>
+            <span class="loader_current_temp"></span>
           </div>
           <div class="measure_comp">
             <div class="meaure_comp_timestamp">
@@ -75,15 +75,6 @@
                 <span id="measure_temp_mean0"></span>
                 <span class="measure_value_units">&deg;C</span>
               </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_temp_mean0_timestamp"></span>
-                </div>
-              </div>
             </li>
 
             <li>
@@ -91,30 +82,12 @@
                 <span id="measure_temp_mean1"></span>
                 <span class="measure_value_units">&deg;C</span>
               </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_temp_mean1_timestamp"></span>
-                </div>
-              </div>
             </li>
 
             <li>
               <div class="measure_value">
                 <span id="measure_temp_mean2"></span>
                 <span class="measure_value_units">&deg;C</span>
-              </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_temp_mean2_timestamp"></span>
-                </div>
               </div>
             </li>
           </ul>
@@ -189,17 +162,24 @@
             <span class="configuration_current_value">5</span>
             <span>seconds</span>
           </div>
-          <div class="configuration_edit configuration_edit--input" id="config_temp_rate">
-            <input type="number" min="0" max="100" />
-            <span>seconds</span>
-            <button>Submit</button>
+          <div class="configuration_edit configuration_edit--input">
+            <select id="config_temp_rate">
+              <option value="1">1 seconds</option>
+              <option value="2">2 seconds</option>
+              <option value="5">5 seconds</option>
+              <option value="10">10 seconds</option>
+              <option value="20">20 seconds</option>
+              <option value="30">30 seconds</option>
+              <option value="60">60 seconds</option>
+            </select>
+            <button id="config_temp_rate_submit">Submit</button>
           </div>
         </div>
 
         <div class="configuration">
           <label>Display units</label>
-          <div class="configuration_edit configuration_edit--select" id="config_temp_units">
-            <select>
+          <div class="configuration_edit configuration_edit--select">
+            <select id="config_temp_units">
               <option value="c">&deg;C (Celsius)</option>
               <option value="f">&deg;F (Fahrenheit)</option>
               <option value="k">K (Kelvin)</option>
@@ -214,16 +194,16 @@
     </section>
 
       <!-- container Humidity: Could be dynamically generated! -->
-    <section class="content content--hidden" id="content_humidity">
+    <section class="content content--hidden content--loading" id="content_humidity">
 
-      <div class="content_info content_info--hide-measures">
+      <div class="content_info">
 
         <div class="measure">
           <label>Current Value</label>
           <div class="measure_value">
             <span id="measure_humidity_current"></span>
             <span class="measure_value_units">%</span>
-            <span class="loader_current"></span>
+            <span class="loader_current_humidity"></span>
           </div>
           <div class="measure_comp">
             <div class="meaure_comp_timestamp">
@@ -245,15 +225,6 @@
                 <span id="measure_humidity_mean0"></span>
                 <span class="measure_value_units">%</span>
               </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_humidity_mean0_timestamp"></span>
-                </div>
-              </div>
             </li>
 
             <li>
@@ -261,30 +232,12 @@
                 <span id="measure_humidity_mean1"></span>
                 <span class="measure_value_units">%</span>
               </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_humidity_mean1_timestamp"></span>
-                </div>
-              </div>
             </li>
 
             <li>
               <div class="measure_value">
                 <span id="measure_humidity_mean2"></span>
                 <span class="measure_value_units">%</span>
-              </div>
-              <div class="measure_comp">
-                <div class="meaure_comp_timestamp">
-                  <svg height="12px" viewBox="0 0 24 24" width="12px" fill="#004">
-                    <path d="M0 0h24v24H0V0z" fill="none"/>
-                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                  </svg>
-                  <span id="measure_humidity_mean2_timestamp"></span>
-                </div>
               </div>
             </li>
           </ul>
@@ -358,10 +311,17 @@
             <span class="configuration_current_value">5</span>
             <span>seconds</span>
           </div>
-          <div class="configuration_edit configuration_edit--input" id="config_humi_rate">
-            <input type="number" min="0" max="100" />
-            <span>seconds</span>
-            <button>Submit</button>
+          <div class="configuration_edit configuration_edit--input">
+            <select id="config_humi_rate">
+              <option value="1">1 seconds</option>
+              <option value="2">2 seconds</option>
+              <option value="5">5 seconds</option>
+              <option value="10">10 seconds</option>
+              <option value="20">20 seconds</option>
+              <option value="30">30 seconds</option>
+              <option value="60">60 seconds</option>
+            </select>
+            <button id="config_humi_rate_submit">Submit</button>
           </div>
         </div>
 
