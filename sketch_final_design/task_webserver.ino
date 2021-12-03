@@ -47,9 +47,10 @@ void setupWebServer() {
   server.on("/script.js", handleScriptJS);
 
   server.on("/api/temp", handleTemperatureRequest);
-  server.on("/api/humidity", handleHumidityRequest);
+  server.on("/api/humi", handleHumidityRequest);
 
   server.on("/api/temp/rate", handleChangeTemperatureRate);
+  server.on("/api/humi/rate", handleChangeHumidityRate);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -142,19 +143,26 @@ extern schedulerTask *task_temperature, *task_humidity;
 
 void handleTemperatureRequest () {
   char json[1000];
+  
+  char string_mean_0[4];
+  char string_mean_1[4];
+  char string_mean_2[4];
+  sprintf(string_mean_0, "%2.1f", state.temperature.means[0]);
+  sprintf(string_mean_1, "%2.1f", state.temperature.means[1]);
+  sprintf(string_mean_2, "%2.1f", state.temperature.means[2]);
 
   sprintf(json,
     "{\
     \"current\": { \"value\": %2.1f, \"timestamp\": \"%s\"  },\
-    \"means\": [{ \"value\": %2.1f }, { \"value\": %2.1f }, { \"value\": %2.1f }],\
+    \"means\": [{ \"value\": %s }, { \"value\": %s }, { \"value\": %s }],\
     \"config\": { \"rate\": %d, \"threshold\": %2.1f },\
     \"alarm\": %s\
     }",
     state.temperature.current.value,
     state.temperature.current.timestamp,
-    state.temperature.means[0],
-    state.temperature.means[1],
-    state.temperature.means[2],
+    state.temperature.means[0] == NULL ? "null" : string_mean_0,
+    state.temperature.means[1] == NULL ? "null" : string_mean_1,
+    state.temperature.means[2] == NULL ? "null" : string_mean_2,
     task_temperature->schedule_ticks / 10,
     state.temperature.threshold,
     state.temperature.is_alarm ? "true" : "false"
@@ -205,21 +213,33 @@ void handleChangeTemperatureRate () {
   server.send(200, "application/json", json);
 }
 
+void handleChangeHumidityRate () {
+  char json[500];
+  
+  if (server.hasArg("value")) {
+    int new_rate = server.arg("value").toInt();
+    
+    task_humidity->schedule_ticks = new_rate*10;
+    
+    sprintf(json, "{ \"success\": true, \"value\": %d }", new_rate);
+  } else {
+    int seconds = task_humidity->schedule_ticks / 10;
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", seconds);
+  }
+
+  server.send(200, "application/json", json);
+}
 
 
 void handleNotFound() {
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
+  char json[500];
 
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-
-  server.send(404, "text/plain", message);
+  sprintf(json,
+    "{ \"message\": \"endpoint not found\", \"URI\": \"%s\", \"method\": \"%s\", \"args\": \"%s\" }",
+    server.uri(),
+    server.method() == HTTP_GET ? "GET" : "POST",
+    server.args()
+  );
+  
+  server.send(404, "application/json", json);
 }

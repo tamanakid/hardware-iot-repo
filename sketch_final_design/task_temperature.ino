@@ -52,7 +52,6 @@ void temperatureMeanReadAndReset () {
   Serial.print("task:temperature> New temperature mean: ");
   Serial.println(state.temperature.mean_current);
   
-  
   state.temperature.mean_count = 0;
   state.temperature.mean_current = 0;
 }

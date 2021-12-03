@@ -110,22 +110,27 @@ function renderLoader(size, tab) {
 
 let intervalRates = {
     temp: undefined,
-    humidity: undefined,
+    humi: undefined,
 };
 let poolingIntervalIDs = {
     temp: undefined,
-    humidity: undefined,
+    humi: undefined,
+};
+let isFirstCall = {
+    temp: true,
+    humi: true,
+};
+let isAJAXCallInProgress = {
+    temp: false,
+    humi: false,
 };
 
-let isFirstCall = true;
-let isAJAXCallInProgress = false;
-
 async function renderMeasurementValues (tab) {
-    if (!isAJAXCallInProgress) {
-        isAJAXCallInProgress = true;
+    if (!isAJAXCallInProgress[tab]) {
+        isAJAXCallInProgress[tab] = true;
 
         let loaderElement;
-        if (isFirstCall) {
+        if (isFirstCall[tab]) {
             loaderElement = document.querySelector(`.content--loading#content_${tab}`);
             loaderElement.appendChild(renderLoader('large', tab));
         } else {
@@ -137,17 +142,17 @@ async function renderMeasurementValues (tab) {
     
         const measures = await endpoints.getMeasurementValues(tab);
     
-        if (isFirstCall) {
+        if (isFirstCall[tab]) {
             loaderElement.classList.remove('content--loading');
             const firstCallLoader = loaderElement.getElementsByClassName(`loader loader_${tab}`)[0];
             if (firstCallLoader) {
                 firstCallLoader.remove();
             }
-            isFirstCall = false;
+            isFirstCall[tab] = false;
         } else {
             loaderElement.innerHTML = '';
         }
-        isAJAXCallInProgress = false;
+        isAJAXCallInProgress[tab] = false;
     
         renderTabMeasurements(measures, tab);
 
@@ -202,7 +207,7 @@ function onUpdateCurrentInterval(tab, value) {
 
 
 renderMeasurementValues('temp');
-renderMeasurementValues('humidity');
+renderMeasurementValues('humi');
 
 
 
@@ -323,14 +328,14 @@ const LOCAL_STORAGE_KEY_TAB = 'WEATHER_STATION_TAB';
 
 /* DOM references */
 const tabButtons = {
-    temperature: document.querySelector('[data-tab-id=temperature]'),
-    humidity: document.querySelector('[data-tab-id=humidity]'),
+    temp: document.querySelector('[data-tab-id=temp]'),
+    humi: document.querySelector('[data-tab-id=humi]'),
     storage: document.querySelector('[data-tab-id=storage]'),
 }
 
 const tabContents = {
-    temperature: document.querySelector('#content_temp'),
-    humidity: document.querySelector('#content_humidity'),
+    temp: document.querySelector('#content_temp'),
+    humi: document.querySelector('#content_humi'),
     storage: document.querySelector('#content_storage'),
 }
 
@@ -363,12 +368,12 @@ function setTab (newTab) {
     onMountTab(newTab);
 }
 
-tabButtons.temperature.onclick = function () {
-    setTab('temperature');
+tabButtons.temp.onclick = function () {
+    setTab('temp');
 }
 
-tabButtons.humidity.onclick = function () {
-    setTab('humidity');
+tabButtons.humi.onclick = function () {
+    setTab('humi');
 }
 
 tabButtons.storage.onclick = function () {
@@ -378,7 +383,7 @@ tabButtons.storage.onclick = function () {
 function onInit() {
     let currentTab = localStorage.getItem(LOCAL_STORAGE_KEY_TAB);
     if (currentTab === null) {
-        currentTab = 'temperature';
+        currentTab = 'temp';
     }
     setTab(currentTab);
 }
