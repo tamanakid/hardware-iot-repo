@@ -9,21 +9,21 @@ String fileRead (String fileURI) {
       return "Error";
     }
 
-    if (SPIFFS.exists(fileURI)) {
-      Serial.println("File exists in flash");
-    } else {
-      Serial.println("File doesn't exist in flash");
+    if (!SPIFFS.exists(fileURI)) {
+      Serial.print("File doesn't exist in flash: ");
+      Serial.println(fileURI);
+      return "Error";
     }
     
     File file = SPIFFS.open(fileURI, "r");
     if (!file) {
-      Serial.println("Error opening file");
+      Serial.print("Error opening file: ");
+      Serial.println(fileURI);
       return "Error";
     }
 
     Serial.print("Reading file: ");
-    Serial.print(fileURI);
-    Serial.println(" ");
+    Serial.println(fileURI);
     while (file.available()) {
       myString += file.readStringUntil('\n');
     }

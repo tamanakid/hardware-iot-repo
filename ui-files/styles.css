@@ -302,7 +302,7 @@ section#container {
 	font-family: monospace;
 	font-size: 0.75em;
 	white-space: pre-line;
-	line-height: 0.6em;
+	line-height: 1.4em;
 }
 
 .storage_display--no-file {

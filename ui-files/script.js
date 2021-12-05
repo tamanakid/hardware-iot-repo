@@ -41,29 +41,25 @@ function changeConfig (tab, configField, params) {
 /** Storage endpoints */
 
 function getAllFilesFromStorage () {
-	const endpointUrl = '/storage';
-
-	const response = [
-			'logs/alarms.log',
-			'logs/measures.log',
-			'logs/records.log',
-			'logs/wifi.log',
-	];
-
-	return new Promise((resolve, reject) => {
-			setTimeout(() => {
-					resolve(response);
-			}, 2000);
-	});
-}
-
-function getFileFromStorage (filename) {
-	// const endpointUrl = `/file?name=${filename}`;
-	const endpointUrl = `/api/test`;
+	// const endpointUrl = '/storage';
+    const endpointUrl = '/api/files/all';
 
 	const promise = new Promise((resolve, reject) => {
 		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response['test-1']);
+			resolve(response);
+		});
+	});
+
+	return promise;
+}
+
+function getFileFromStorage (filename) {
+	const endpointUrl = `/api/files/get`;
+    const params = `filename=${filename}`;
+
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "POST", params }, function (response) {
+			resolve(response.content);
 		});
 	});
 

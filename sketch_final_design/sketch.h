@@ -26,22 +26,15 @@ enum e_scheduler_action {
 
 typedef e_scheduler_action t_scheduler_action;
 
-/*
-typedef struct {
-  int hours;
-  int minutes;
-  int seconds;
-  int epoch;
-} t_time;
-*/
-typedef struct {
-  int second;
-  int minute;
-  int hour;
-  int day;
-  int month;
-  int year;
-} t_time_clock;
+
+enum e_file_types {
+  FILE_DAT,
+  FILE_MDAT,
+  FILE_LOG,
+};
+
+typedef e_file_types t_file_types;
+
 
 typedef struct {
   float value;
@@ -82,7 +75,6 @@ typedef struct {
   t_humidity_info humidity;
   bool is_server_active;
   struct tm time_clock;
-  // t_time_clock time_clock;
 } t_global_state;
 
 
@@ -90,6 +82,7 @@ typedef struct {
 void updateScheduler(t_scheduler_action action);
 
 void setupWifiConnect(void);
+void setupWebServerFiles(void);
 void setupWebServer(void);
 void setupTemperature(void);
 void setupHumidity(void);

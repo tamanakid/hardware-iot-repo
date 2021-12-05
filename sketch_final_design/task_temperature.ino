@@ -36,8 +36,8 @@ void taskTemperature() {
   // Serial.println(state.temperature.current.timestamp);
   
   state.temperature.is_alarm = (state.temperature.current.value > state.temperature.threshold) ? true : false;
-  Serial.print("task:temperature> Temperature alarm is ");
-  Serial.println(state.temperature.is_alarm ? "ON" : "OFF");
+  // Serial.print("task:temperature> Temperature alarm is ");
+  // Serial.println(state.temperature.is_alarm ? "ON" : "OFF");
 }
 
 
@@ -58,8 +58,8 @@ void temperatureMeanReadAndReset () {
   state.temperature.means[1] = state.temperature.means[0];
   state.temperature.means[0] = state.temperature.mean_current;
 
-  Serial.print("task:temperature> New temperature mean: ");
-  Serial.println(state.temperature.mean_current);
+  // Serial.print("task:temperature> New temperature mean: ");
+  // Serial.println(state.temperature.mean_current);
   
   state.temperature.mean_count = 0;
   state.temperature.mean_current = 0;

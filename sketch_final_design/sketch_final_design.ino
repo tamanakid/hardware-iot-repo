@@ -80,6 +80,7 @@ void setup() {
   Serial.println("RESET: Running setup function.");
   
   setupWifiConnect();
+  setupWebServerFiles();
   setupTemperature();
   setupHumidity();
 

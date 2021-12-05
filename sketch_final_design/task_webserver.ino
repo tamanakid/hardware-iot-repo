@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
+// TODO remove:
+#include "FS.h"
 
 #include "file_handler.h"
 #include "hardware.h"
@@ -18,29 +20,32 @@ String stylesCSS;
 String scriptJS;
 
 
-void setupWebServer() {
-  Serial.println("task:webServer> Setup");
-
-  pinMode(MINID1_PIN_D0, OUTPUT);
-  digitalWrite(MINID1_PIN_D0, LOW);
-
-  indexHTML = fileRead("/index.html");
+void setupWebServerFiles() {
+  indexHTML = fileRead("/ui/index.html");
   if (indexHTML.equals("Error")){
     Serial.println("Error reading 'index.html' from flash.");
     return;
   }
   
-  stylesCSS = fileRead("/styles.css");
+  stylesCSS = fileRead("/ui/styles.css");
   if (stylesCSS.equals("Error")){
     Serial.println("Error reading 'styles.css' from flash.");
     return;
   }
 
-  scriptJS = fileRead("/script.js");
+  scriptJS = fileRead("/ui/script.js");
   if (scriptJS.equals("Error")){
     Serial.println("Error reading 'script.js' from flash.");
     return;
   }
+}
+
+
+void setupWebServer() {
+  Serial.println("task:webServer> Setup");
+
+  pinMode(MINID1_PIN_D0, OUTPUT);
+  digitalWrite(MINID1_PIN_D0, LOW);
   
   server.on("/index.html", handleIndex);
   server.on("/styles.css", handleStyles);
@@ -54,6 +59,9 @@ void setupWebServer() {
 
   server.on("/api/temp/thres", handleChangeTemperatureThreshold);
   server.on("/api/humi/thres", handleChangeHumidityThreshold);
+
+  server.on("/api/files/all", handleFilesGetAll);
+  server.on("/api/files/get", handleFilesGet);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -283,6 +291,66 @@ void handleChangeHumidityThreshold () {
 
   server.send(200, "application/json", json);
 }
+
+
+void handleFilesGetAll() {
+  char json[5000];
+  sprintf(json, "[");
+  
+  Dir dir = SPIFFS.openDir("");
+
+  int count = 0;
+  char filename[50];
+  while (dir.next()) {
+    filename[0] = 0;
+    
+    if (count > 0) {
+      strcat(json, ",");
+    }
+    count++;
+
+    // Serial.print("File found: ");
+    // Serial.print(dir.fileName());
+    // Serial.print(" - Size: ");
+    // Serial.println (dir.fileSize());
+
+    sprintf(filename, "\"%s\"", dir.fileName().c_str());    
+    strcat(json, filename);
+  }
+  strcat(json, "]");
+
+  server.send(200, "application/json;charset=UTF-8", json);
+}
+
+void handleFilesGet() {
+  String json;
+
+  if (server.hasArg("filename")) {
+    String filename = server.arg("filename");
+
+    if (!SPIFFS.exists(filename)) {
+      json = "{ \"success\": false, \"message\": \"File not found: ";
+      json += filename;
+      json += "\" }";
+      
+    } else {
+      String content = fileRead(filename);
+      // content.replace("\n", "\\n");
+      content.replace("\r", "\\n");
+
+      json = "{ \"success\": true, \"content\": \"";
+      json += content;
+      json += "\" }";
+      // sprintf(json, "{ \"success\": true, \"content\": %d }", content);
+    }
+  } else {
+    json = "{ \"success\": false, \"message\": \"The 'filename' parameter is missing from the request.\" }";
+  }
+
+  // server.send(200, "application/json;charset=UTF-8", json);
+  handleFile(&json, json.length(), "application/json;charset=UTF-8");
+}
+
 
 
 void handleNotFound() {
