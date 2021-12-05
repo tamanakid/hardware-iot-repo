@@ -26,6 +26,7 @@ void taskTemperature() {
   
   state.temperature.current.value = ((float)((int)(temperature_read * 10))) / 10;
   temperatureMeanRecalculate(state.temperature.current.value);
+  sprintf(state.temperature.current.timestamp, "%2d:%2d:%2d", state.time_clock.hour, state.time_clock.minute, state.time_clock.second);
 
   Serial.print("task:temperature> Temperature read: ");
   Serial.println(state.temperature.current.value);

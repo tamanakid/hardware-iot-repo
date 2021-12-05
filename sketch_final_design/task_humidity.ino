@@ -26,6 +26,7 @@ void taskHumidity () {
   
   state.humidity.current.value = humidity_read;
   humidityMeanRecalculate(state.humidity.current.value);
+  sprintf(state.humidity.current.timestamp, "%2d:%2d:%2d", state.time_clock.hour, state.time_clock.minute, state.time_clock.second);
 
   Serial.print("task:humidity> Humidity read: ");
   Serial.println(state.humidity.current.value);

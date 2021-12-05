@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
+#include "time.h"
 
 #include "scheduler.h"
 
@@ -25,22 +26,31 @@ enum e_scheduler_action {
 
 typedef e_scheduler_action t_scheduler_action;
 
-
+/*
 typedef struct {
   int hours;
   int minutes;
   int seconds;
   int epoch;
 } t_time;
+*/
+typedef struct {
+  int second;
+  int minute;
+  int hour;
+  int day;
+  int month;
+  int year;
+} t_time_clock;
 
 typedef struct {
   float value;
-  String timestamp;
+  char timestamp[30];
 } t_measure_temperature;
 
 typedef struct {
   int value;
-  String timestamp;
+  char timestamp[30];
 } t_measure_humidity;
 
 typedef struct {
@@ -71,7 +81,8 @@ typedef struct {
   t_temperature_info temperature;
   t_humidity_info humidity;
   bool is_server_active;
-  t_time timestamp;
+  // struct tm time_clock;
+  t_time_clock time_clock;
 } t_global_state;
 
 

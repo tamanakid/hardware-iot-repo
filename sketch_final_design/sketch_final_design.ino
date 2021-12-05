@@ -14,18 +14,18 @@ t_global_state state = {
   temperature: {
     current: {
       value: NULL,
-      timestamp: "",
+      { timestamp: "" }
     },
     mean_current: 0,
     mean_count: 0,
     means: { NULL, NULL, NULL },
     record_min: {
       value: NULL,
-      timestamp: "",
+      { timestamp: "" }
     },
     record_max: {
       value: NULL,
-      timestamp: "",
+      { timestamp: "" }
     },
     threshold: 30,
     is_alarm: false,
@@ -33,28 +33,30 @@ t_global_state state = {
   humidity: {
     current: {
       value: 0,
-      timestamp: "",
+      { timestamp: "" }
     },
     mean_current: 0,
     mean_count: 0,
     means: { 0, 0, 0 },
     record_min: {
       value: NULL,
-      timestamp: "",
+      { timestamp: "" }
     },
     record_max: {
       value: NULL,
-      timestamp: "",
+      { timestamp: "" }
     },
     threshold: 50,
     is_alarm: false,
   },
   is_server_active: false,
-  timestamp: {
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    epoch: 0,
+  time_clock: {
+    second: 0,
+    minute: 0,
+    hour: 0,
+    day: 0,
+    month: 0,
+    year: 0,
   }
   /*
   measures: {
