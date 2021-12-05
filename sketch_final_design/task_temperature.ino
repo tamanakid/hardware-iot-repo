@@ -26,10 +26,18 @@ void taskTemperature() {
   
   state.temperature.current.value = ((float)((int)(temperature_read * 10))) / 10;
   temperatureMeanRecalculate(state.temperature.current.value);
-  sprintf(state.temperature.current.timestamp, "%2d:%2d:%2d", state.time_clock.hour, state.time_clock.minute, state.time_clock.second);
 
   Serial.print("task:temperature> Temperature read: ");
   Serial.println(state.temperature.current.value);
+  
+  sprintf(state.temperature.current.timestamp, "%02d:%02d:%02d - %02d/%02d/%04d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec, state.time_clock.tm_mday, state.time_clock.tm_mon, state.time_clock.tm_year);
+
+  // Serial.print("task:temperature> Temperature read at date ");
+  // Serial.println(state.temperature.current.timestamp);
+  
+  state.temperature.is_alarm = (state.temperature.current.value > state.temperature.threshold) ? true : false;
+  Serial.print("task:temperature> Temperature alarm is ");
+  Serial.println(state.temperature.is_alarm ? "ON" : "OFF");
 }
 
 

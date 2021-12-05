@@ -70,23 +70,23 @@
         <div class="measure measure--list">
           <label>Last Mean Calculations</label>
           <ul>
-            <li>
+            <li id="measure_temp_mean0">
               <div class="measure_value">
-                <span id="measure_temp_mean0"></span>
+                <span id="measure_temp_mean0_value"></span>
                 <span class="measure_value_units">&deg;C</span>
               </div>
             </li>
 
-            <li>
+            <li id="measure_temp_mean1">
               <div class="measure_value">
-                <span id="measure_temp_mean1"></span>
+                <span id="measure_temp_mean1_value"></span>
                 <span class="measure_value_units">&deg;C</span>
               </div>
             </li>
 
-            <li>
+            <li id="measure_temp_mean2">
               <div class="measure_value">
-                <span id="measure_temp_mean2"></span>
+                <span id="measure_temp_mean2_value"></span>
                 <span class="measure_value_units">&deg;C</span>
               </div>
             </li>
@@ -145,13 +145,13 @@
           <label>Threshold value</label>
           <div class="configuration_current">
             <span>Currently set to:</span>
-            <span class="configuration_current_value">30</span>
+            <span class="configuration_current_value" id="config_temp_thres_value">30</span>
             <span class="measure_value_units">&deg;C</span>
           </div>
-          <div class="configuration_edit configuration_edit--input" id="config_temp_threshold">
-            <input type="number" min="0" max="100" />
+          <div class="configuration_edit configuration_edit--input">
+            <input type="number" min="0" max="100" id="config_temp_thres"/>
             <span>&deg;C</span>
-            <button>Submit</button>
+            <button id="config_temp_thres_submit">Submit</button>
           </div>
         </div>
 
@@ -159,7 +159,7 @@
           <label>Measurement Rate</label>
           <div class="configuration_current">
             <span>Currently set to:</span>
-            <span class="configuration_current_value">5</span>
+            <span class="configuration_current_value" id="config_temp_rate_value">5</span>
             <span>seconds</span>
           </div>
           <div class="configuration_edit configuration_edit--input">
@@ -220,23 +220,23 @@
         <div class="measure measure--list">
           <label>Last Mean Calculations</label>
           <ul>
-            <li>
+            <li id="measure_humi_mean0">
               <div class="measure_value">
-                <span id="measure_humi_mean0"></span>
+                <span id="measure_humi_mean0_value"></span>
                 <span class="measure_value_units">%</span>
               </div>
             </li>
 
-            <li>
+            <li id="measure_humi_mean1">
               <div class="measure_value">
-                <span id="measure_humi_mean1"></span>
+                <span id="measure_humi_mean1_value"></span>
                 <span class="measure_value_units">%</span>
               </div>
             </li>
 
-            <li>
+            <li id="measure_humi_mean2">
               <div class="measure_value">
-                <span id="measure_humi_mean2"></span>
+                <span id="measure_humi_mean2_value"></span>
                 <span class="measure_value_units">%</span>
               </div>
             </li>
@@ -294,13 +294,13 @@
           <label>Threshold value</label>
           <div class="configuration_current">
             <span>Currently set to:</span>
-            <span class="configuration_current_value">50</span>
+            <span class="configuration_current_value" id="config_humi_thres_value">50</span>
             <span>%</span>
           </div>
-          <div class="configuration_edit configuration_edit--input" id="config_humi_threshold">
-            <input type="number" min="0" max="100" />
+          <div class="configuration_edit configuration_edit--input">
+            <input type="number" min="0" max="100" id="config_humi_thres"/>
             <span>%</span>
-            <button>Submit</button>
+            <button id="config_humi_thres_submit">Submit</button>
           </div>
         </div>
 
@@ -308,7 +308,7 @@
           <label>Measurement Rate</label>
           <div class="configuration_current">
             <span>Currently set to:</span>
-            <span class="configuration_current_value">5</span>
+            <span class="configuration_current_value" id="config_humi_rate_value">5</span>
             <span>seconds</span>
           </div>
           <div class="configuration_edit configuration_edit--input">
@@ -356,13 +356,13 @@
     <div class="alarm_block">
       <span>Temperature</span>
       <div class="alarm_block_led_outside">
-        <div class="alarm_block_led_inside alarm-on" id="alarm_led_temp"></div>
+        <div class="alarm_block_led_inside" id="alarm_led_temp"></div>
       </div>
     </div>
     <div class="alarm_block">
       <span>Humidity</span>
       <div class="alarm_block_led_outside">
-        <div class="alarm_block_led_inside" id="alarm_led_hum"></div>
+        <div class="alarm_block_led_inside" id="alarm_led_humi"></div>
       </div>
     </div>
   </section>

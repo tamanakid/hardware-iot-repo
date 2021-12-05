@@ -51,12 +51,12 @@ t_global_state state = {
   },
   is_server_active: false,
   time_clock: {
-    second: 0,
-    minute: 0,
-    hour: 0,
-    day: 0,
-    month: 0,
-    year: 0,
+    tm_sec: 0,
+    tm_min: 0,
+    tm_hour: 0,
+    tm_mday: 0,
+    tm_mon: 0,
+    tm_year: 0,
   }
   /*
   measures: {

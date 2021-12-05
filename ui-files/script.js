@@ -26,8 +26,8 @@ function getMeasurementValues (tab) {
 	return promise;
 }
 
-function changeRate (tab, params) {
-    const endpointUrl = `/api/${tab}/rate`;
+function changeConfig (tab, configField, params) {
+    const endpointUrl = `/api/${tab}/${configField}`;
 
 	const promise = new Promise((resolve, reject) => {
 		onRequest(endpointUrl, { method: "POST", params }, function (response) {
@@ -87,7 +87,7 @@ async function deleteFlash () {
 
 const endpoints = {
 	getMeasurementValues,
-    changeRate,
+    changeConfig,
 	getAllFilesFromStorage,
 	getFileFromStorage,
 	deleteFlash,
@@ -162,34 +162,50 @@ async function renderMeasurementValues (tab) {
     }
 }
 
-function renderTabMeasurements(tabMeasurements, type) {
+function renderTabMeasurements(tabMeasurements, tab) {
     
     // Measurement: Current value
-    const measurementCurrentEl = document.getElementById(`measure_${type}_current`);
+    const measurementCurrentEl = document.getElementById(`measure_${tab}_current`);
     measurementCurrentEl.innerHTML = tabMeasurements.current.value;
-    const measurementCurrentTimestampEl = document.getElementById(`measure_${type}_current_timestamp`);
+    const measurementCurrentTimestampEl = document.getElementById(`measure_${tab}_current_timestamp`);
     measurementCurrentTimestampEl.innerHTML = tabMeasurements.current.timestamp;
 
     // Measurement: Latest means
     if (tabMeasurements.means) {
         tabMeasurements.means.forEach((mean, index) => {
-            const measurementMeanEl = document.getElementById(`measure_${type}_mean${index}`);
-            measurementMeanEl.innerHTML = mean.value;
+            const measurementMeanEl = document.getElementById(`measure_${tab}_mean${index}`);
+            if (mean.value) {
+                const measurementMeanValueEl = document.getElementById(`measure_${tab}_mean${index}_value`);
+                measurementMeanValueEl.innerHTML = mean.value;
+                measurementMeanEl.style.display = 'list-item';
+            } else {
+                measurementMeanEl.style.display = 'none';
+            }
         });
     }
 
     // Measurement: Record max and min
     if (tabMeasurements.recordMax) {
-        const measurementMaxEl = document.getElementById(`measure_${type}_max`);
+        const measurementMaxEl = document.getElementById(`measure_${tab}_max`);
         measurementMaxEl.innerHTML = tabMeasurements.recordMax.value;
-        const measurementMaxTimestampEl = document.getElementById(`measure_${type}_max_timestamp`);
+        const measurementMaxTimestampEl = document.getElementById(`measure_${tab}_max_timestamp`);
         measurementMaxTimestampEl.innerHTML = tabMeasurements.recordMax.timestamp;
     }
     if (tabMeasurements.recordMin) {
-        const measurementMinEl = document.getElementById(`measure_${type}_min`);
+        const measurementMinEl = document.getElementById(`measure_${tab}_min`);
         measurementMinEl.innerHTML = tabMeasurements.recordMin.value;
-        const measurementMinTimestampEl = document.getElementById(`measure_${type}_min_timestamp`);
+        const measurementMinTimestampEl = document.getElementById(`measure_${tab}_min_timestamp`);
         measurementMinTimestampEl.innerHTML = tabMeasurements.recordMin.timestamp;
+    }
+
+    // Config
+
+    // Alarm
+    const alarmEl = document.getElementById(`alarm_led_${tab}`);
+    if (tabMeasurements.alarm) {
+        alarmEl.classList.add('alarm-on');
+    } else {
+        alarmEl.classList.remove('alarm-on');
     }
 }
 
@@ -211,20 +227,41 @@ renderMeasurementValues('humi');
 
 
 
-async function onSubmitRate (tab) {
-    const rateSelector = document.getElementById(`config_${tab}_rate`);
+async function onSubmitConfig (tab, configField) {
+    const rateSelector = document.getElementById(`config_${tab}_${configField}`);
     const params = `value=${rateSelector.value}`;
-    const response = await endpoints.changeRate('temp', params);
+
+    // Validate Threshold
+    if (configField === 'thres') {
+        const value = Number(rateSelector.value);
+        if (!value || value < 0 || value > 100) {
+            alert('Value must be between 0 and 100');
+            return;
+        }
+    }
+
+    const response = await endpoints.changeConfig(tab, configField, params);
 
     if (response.success) {
-        onUpdateCurrentInterval(tab, response.value)
+        if (configField == 'rate') {
+            onUpdateCurrentInterval(tab, response.value);
+        }
+        const valueEl = document.getElementById(`config_${tab}_${configField}_value`);
+        if (valueEl) {
+            valueEl.innerHTML = response.value;
+        }
     }
 }
 
 const tempRateSubmitBtn = document.getElementById('config_temp_rate_submit');
 const humiRateSubmitBtn = document.getElementById('config_humi_rate_submit');
-tempRateSubmitBtn.addEventListener('click', () => onSubmitRate('temp'))
-humiRateSubmitBtn.addEventListener('click', () => onSubmitRate('humi'))
+tempRateSubmitBtn.addEventListener('click', () => onSubmitConfig('temp', 'rate'));
+humiRateSubmitBtn.addEventListener('click', () => onSubmitConfig('humi', 'rate'));
+
+const tempThresSubmitBtn = document.getElementById('config_temp_thres_submit');
+const humiThresSubmitBtn = document.getElementById('config_humi_thres_submit');
+tempThresSubmitBtn.addEventListener('click', () => onSubmitConfig('temp', 'thres'));
+humiThresSubmitBtn.addEventListener('click', () => onSubmitConfig('humi', 'thres'));
 
 
 

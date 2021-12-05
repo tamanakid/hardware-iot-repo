@@ -81,8 +81,8 @@ typedef struct {
   t_temperature_info temperature;
   t_humidity_info humidity;
   bool is_server_active;
-  // struct tm time_clock;
-  t_time_clock time_clock;
+  struct tm time_clock;
+  // t_time_clock time_clock;
 } t_global_state;
 
 

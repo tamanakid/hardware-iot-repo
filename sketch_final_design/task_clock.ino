@@ -23,8 +23,12 @@ void setupClock() {
   struct tm time_struct;
   
   timestamp = ntpClient.getEpochTime();
-  time_struct = *localtime(&timestamp);
-   
+  // time_struct = *localtime(&timestamp);
+  state.time_clock = *localtime(&timestamp);
+
+  state.time_clock.tm_year = state.time_clock.tm_year + 1900;
+  state.time_clock.tm_mon = state.time_clock.tm_mon + 1;
+  /*
   state.time_clock.year = time_struct.tm_year + 1900;
   state.time_clock.month = time_struct.tm_mon + 1;
   state.time_clock.day = time_struct.tm_mday;
@@ -32,28 +36,29 @@ void setupClock() {
   state.time_clock.hour = time_struct.tm_hour;
   state.time_clock.minute = time_struct.tm_min;
   state.time_clock.second = time_struct.tm_sec;
+  */
   // seg=fecha_hora.tm_hour*3600+fecha_hora.tm_min*60+fecha_hora.tm_sec+1;
 }
 
 
 void taskClock() {
-  state.time_clock.second = state.time_clock.second + 1;
+  state.time_clock.tm_sec = state.time_clock.tm_sec + 1;
   
-  if (state.time_clock.second == 60) {
-    state.time_clock.second = 0;
-    state.time_clock.minute = state.time_clock.minute + 1;
+  if (state.time_clock.tm_sec == 60) {
+    state.time_clock.tm_sec = 0;
+    state.time_clock.tm_min = state.time_clock.tm_min + 1;
     // if state.timestamp.minutes % 5 == 0
     temperatureMeanReadAndReset();
     humidityMeanReadAndReset();
   }
 
-  if (state.time_clock.minute == 60) {
-    state.time_clock.minute = 0;
-    state.time_clock.hour = state.time_clock.hour + 1;
+  if (state.time_clock.tm_min == 60) {
+    state.time_clock.tm_min = 0;
+    state.time_clock.tm_hour = state.time_clock.tm_hour + 1;
   }
 
-  if (state.time_clock.hour == 24) {
-    state.time_clock.hour = 0;
+  if (state.time_clock.tm_hour == 24) {
+    state.time_clock.tm_hour = 0;
     // call ntp request again
   }
 

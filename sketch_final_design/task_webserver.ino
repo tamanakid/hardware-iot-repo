@@ -51,6 +51,9 @@ void setupWebServer() {
 
   server.on("/api/temp/rate", handleChangeTemperatureRate);
   server.on("/api/humi/rate", handleChangeHumidityRate);
+
+  server.on("/api/temp/thres", handleChangeTemperatureThreshold);
+  server.on("/api/humi/thres", handleChangeHumidityThreshold);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -144,12 +147,21 @@ extern schedulerTask *task_temperature, *task_humidity;
 void handleTemperatureRequest () {
   char json[1000];
   
-  char string_mean_0[4];
-  char string_mean_1[4];
-  char string_mean_2[4];
+  char string_mean_0[6];
+  char string_mean_1[6];
+  char string_mean_2[6];
   sprintf(string_mean_0, "%2.1f", state.temperature.means[0]);
   sprintf(string_mean_1, "%2.1f", state.temperature.means[1]);
   sprintf(string_mean_2, "%2.1f", state.temperature.means[2]);
+
+  /*
+  Serial.print("Latest temp means: ");
+  Serial.print(string_mean_0);
+  Serial.print(" ");
+  Serial.print(string_mean_1);
+  Serial.print(" ");
+  Serial.println(string_mean_2);
+  */
 
   sprintf(json,
     "{\
@@ -175,18 +187,25 @@ void handleTemperatureRequest () {
 void handleHumidityRequest () {
   char json[500];
 
+  char string_mean_0[6];
+  char string_mean_1[6];
+  char string_mean_2[6];
+  sprintf(string_mean_0, "%d", state.humidity.means[0]);
+  sprintf(string_mean_1, "%d", state.humidity.means[1]);
+  sprintf(string_mean_2, "%d", state.humidity.means[2]);
+
   sprintf(json,
     "{\
     \"current\": { \"value\": %d, \"timestamp\": \"%s\"  },\
-    \"means\": [{ \"value\": %d }, { \"value\": %d }, { \"value\": %d }],\
+    \"means\": [{ \"value\": %s }, { \"value\": %s }, { \"value\": %s }],\
     \"config\": { \"rate\": %d, \"threshold\": %d },\
     \"alarm\": %s\
     }",
     state.humidity.current.value,
     state.humidity.current.timestamp,
-    state.humidity.means[0],
-    state.humidity.means[1],
-    state.humidity.means[2],
+    state.humidity.means[0] == NULL ? "null" : string_mean_0,
+    state.humidity.means[1] == NULL ? "null" : string_mean_1,
+    state.humidity.means[2] == NULL ? "null" : string_mean_2,
     task_humidity->schedule_ticks / 10,
     state.humidity.threshold,
     state.humidity.is_alarm ? "true" : "false"
@@ -225,6 +244,41 @@ void handleChangeHumidityRate () {
   } else {
     int seconds = task_humidity->schedule_ticks / 10;
     sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", seconds);
+  }
+
+  server.send(200, "application/json", json);
+}
+
+
+void handleChangeTemperatureThreshold () {
+  char json[500];
+  
+  if (server.hasArg("value")) {
+    int new_threshold = server.arg("value").toInt();
+
+    state.temperature.threshold = new_threshold;
+    
+    sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
+  } else {
+    int threshold = state.temperature.threshold;
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", state.temperature.threshold);
+  }
+
+  server.send(200, "application/json", json);
+}
+
+void handleChangeHumidityThreshold () {
+  char json[500];
+  
+  if (server.hasArg("value")) {
+    int new_threshold = server.arg("value").toInt();
+
+    state.humidity.threshold = new_threshold;
+    
+    sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
+  } else {
+    int threshold = state.humidity.threshold;
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", state.temperature.threshold);
   }
 
   server.send(200, "application/json", json);

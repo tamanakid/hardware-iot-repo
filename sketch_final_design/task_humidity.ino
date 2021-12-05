@@ -22,14 +22,22 @@ void taskHumidity () {
 
   // Serial.println("task:temperature> Reading humidity...");
   
-  int humidity_read = Sht.getHumidity();
+  int humidity_read = Sht.getHumidity() * 100/118;
   
   state.humidity.current.value = humidity_read;
   humidityMeanRecalculate(state.humidity.current.value);
-  sprintf(state.humidity.current.timestamp, "%2d:%2d:%2d", state.time_clock.hour, state.time_clock.minute, state.time_clock.second);
 
   Serial.print("task:humidity> Humidity read: ");
   Serial.println(state.humidity.current.value);
+
+  sprintf(state.humidity.current.timestamp, "%02d:%02d:%02d - %02d/%02d/%04d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec, state.time_clock.tm_mday, state.time_clock.tm_mon, state.time_clock.tm_year);
+
+  // Serial.print("task:humidity> Humidity read at date ");
+  // Serial.println(state.humidity.current.timestamp);
+
+  state.humidity.is_alarm = (state.humidity.current.value > state.humidity.threshold) ? true : false;
+  Serial.print("task:humidity> Humidity alarm is ");
+  Serial.println(state.humidity.is_alarm ? "ON" : "OFF");
 }
 
 
