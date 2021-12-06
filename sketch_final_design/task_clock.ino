@@ -7,6 +7,9 @@
 
 
 extern t_global_state state;
+extern t_files FILE_SUFFIXES;
+
+extern schedulerTask *task_temperature, *task_humidity;
 
 extern WiFiUDP UdpInstance;
 
@@ -38,9 +41,19 @@ void updateNTP() {
   Serial.print("Request timestamp to NTP server complete:");
   Serial.println(ntp_time);
 
+  String log_string = "NTP Request: " + (String)ntp_time;
+  fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+
   if (!state.is_ntp_updated) {
-    setupLogFiles();
+    fileSetupLogs();
   }
+
+  if (state.is_first_wifi_connect) {
+    String log_string = "Connected to WiFi."; // TODO: WiFi name?
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+    state.is_first_wifi_connect = false;
+  }
+  
 }
 
 
@@ -51,48 +64,16 @@ void setupClock() {
 }
 
 
-// TODO: Move to file_handler file?
-String FILE_PREFIX = "STATION99_";
-t_files FILE_SUFFIXES = {
-  file_dat: ".dat",
-  file_mdat: ".mdat",
-  file_log: ".log",
-};
+void fileSetupLogs() {  
+  fileSetup(&state.current_files.file_dat, FILE_SUFFIXES.file_dat, &state.time_clock);
+  fileSetup(&state.current_files.file_mdat, FILE_SUFFIXES.file_mdat, &state.time_clock);
+  fileSetup(&state.current_files.file_log, FILE_SUFFIXES.file_log, &state.time_clock);
 
-void setupLogFiles() {
-  char date_char[8];
-  sprintf(date_char, "%02d%02d%02d", state.time_clock.tm_year % 100, state.time_clock.tm_mon, state.time_clock.tm_mday);
-  String date_string = (String)date_char;
-  // String date_string = ((String)state.time_clock.tm_year) + ((String)state.time_clock.tm_mon) + ((String)state.time_clock.tm_mday);
-  
-  setupFile(&state.current_files.file_dat, date_string, FILE_SUFFIXES.file_dat);
-  setupFile(&state.current_files.file_mdat, date_string, FILE_SUFFIXES.file_mdat);
-  setupFile(&state.current_files.file_log, date_string, FILE_SUFFIXES.file_log);
-}
-
-void setupFile(String *state_filename, String date_string, String file_suffix) {
-  String new_filename = FILE_PREFIX + date_string + file_suffix;
-  
-  bool is_same_filename = new_filename.equals(*state_filename);
-  bool does_file_exist = SPIFFS.exists(new_filename);
-
-  if (!is_same_filename) {
-    *state_filename = new_filename;
-  }
-  if (!does_file_exist) {
-    char time_char[8];
-    sprintf(time_char, "%02d:%02d%:%02d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec);
-    // String time_string = ((String)state.time_clock.tm_hour) + ":" + ((String)state.time_clock.tm_min) + ":" + ((String)state.time_clock.tm_sec);
-    String time_string = (String)time_char;
-    String first_line = "File '" + new_filename + "' created at " + time_string;
-    
-    bool success = fileWrite(*state_filename, first_line);
-    if (success) {
-      Serial.print("File created: ");
-      Serial.println(*state_filename);
-    }
-    
-  }
+  // Write current rate & thresholds
+  String temp_rate_and_timestamp = "Temper'e - Current rate: " + (String)task_temperature->schedule_ticks/10 + " (secs) - Threshold: " + (String)state.temperature.threshold + " (ºC)";
+  fileWriteWithTimestamp(state.current_files.file_log, temp_rate_and_timestamp, &state.time_clock);
+  String humi_rate_and_timestamp = "Humidity - Current rate: " + (String)task_humidity->schedule_ticks/10 + " (secs) - Threshold: " + (String)state.humidity.threshold + " (%)";
+  fileWriteWithTimestamp(state.current_files.file_log, humi_rate_and_timestamp, &state.time_clock);
 }
 
 
@@ -118,7 +99,7 @@ void taskClock() {
     if (!state.is_ntp_updated) {
       updateNTP();
     } else {
-      setupLogFiles();
+      fileSetupLogs();
       state.is_ntp_updated = false;
     }
   }

@@ -47,6 +47,11 @@ void taskWifiConnect() {
 
         wifi_led = LOW;
         updateScheduler(ACTION_ON_CONNECTED);
+
+        if (!state.is_first_wifi_connect) {
+          String log_string = "Connected to WiFi."; // TODO: WiFi name?
+          fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+        }
         break;
 
       case WL_CONNECT_FAILED:
@@ -59,6 +64,11 @@ void taskWifiConnect() {
         Serial.println("task:WifiConnect> Connection Lost.");
         
         wifi_led = HIGH;
+
+        if (!state.is_first_wifi_connect) {
+          String log_string = "Disconnected from WiFi (Connection Lost)."; // TODO: WiFi name?
+          fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+        }
         break;
 
       case WL_NO_SSID_AVAIL:
@@ -72,6 +82,11 @@ void taskWifiConnect() {
         
         wifi_led = HIGH;
         updateScheduler(ACTION_ON_DISCONNECTED);
+
+        if (!state.is_first_wifi_connect) {
+          String log_string = "Disconnected from WiFi."; // TODO: WiFi name?
+          fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+        }
         break;
     }
   }

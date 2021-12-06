@@ -10,6 +10,14 @@
 
 SHT21 Sht;
 
+String FILE_PREFIX = "STATION99_";
+t_files FILE_SUFFIXES = {
+  file_dat: ".dat",
+  file_mdat: ".mdat",
+  file_log: ".log",
+};
+
+
 t_global_state state = {
   temperature: {
     current: {
@@ -64,6 +72,7 @@ t_global_state state = {
     file_log: "",
   },
   is_ntp_updated: false,
+  is_first_wifi_connect: true,
   /*
   measures: {
     values: { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

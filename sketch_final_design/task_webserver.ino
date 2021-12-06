@@ -13,6 +13,7 @@
 extern t_global_state state;
 extern ESP8266WebServer server;
 
+extern schedulerTask *task_temperature, *task_humidity;
 
 String indexHTML;
 String stylesCSS;
@@ -130,6 +131,8 @@ void handleFile(String *file_content, int file_length, String content_type) {
 
 
 void handleIndex () {
+  // TODO: Get IP address for logging
+  
   Serial.println("Sending index.html");
   int file_length = indexHTML.length();
   handleFile(&indexHTML, file_length, "text/html");
@@ -146,10 +149,6 @@ void handleScriptJS () {
   int file_length = scriptJS.length();
   handleFile(&scriptJS, file_length, "application/javascript;charset=UTF-8");
 }
-
-
-
-extern schedulerTask *task_temperature, *task_humidity;
 
 
 void handleTemperatureRequest () {

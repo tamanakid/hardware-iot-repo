@@ -39,17 +39,13 @@ void taskHumidity () {
   state.humidity.is_alarm = (state.humidity.current.value > state.humidity.threshold) ? true : false;
   // Serial.print("task:humidity> Humidity alarm is ");
   // Serial.println(state.humidity.is_alarm ? "ON" : "OFF");
-
-  char time_char[8];
-  sprintf(time_char, "%02d:%02d%:%02d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec);
-  String time_string = (String)time_char;
   
-  String dat_string = time_string + " - H (%): " + ((String) state.humidity.current.value);
-  fileWrite(state.current_files.file_dat, dat_string);
+  String dat_string = "H (%): " + ((String) state.humidity.current.value);
+  fileWriteWithTimestamp(state.current_files.file_dat, dat_string, &state.time_clock);
 
   if (state.humidity.is_alarm) {
-    String log_string = time_string + " - ALARM (Humidity) - Value: " + ((String) state.humidity.current.value) + " - Threshold: " + ((String) state.humidity.threshold);
-    fileWrite(state.current_files.file_log, log_string);
+    String log_string = "ALARM (Humidity) - Value: " + ((String) state.humidity.current.value) + " - Threshold: " + ((String) state.humidity.threshold);
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   }
 }
 
@@ -73,6 +69,9 @@ void humidityMeanReadAndReset () {
 
   // Serial.print("task:humidity> New humidity mean: ");
   // Serial.println(state.humidity.mean_current);
+
+  String mdat_string = "Humidity Mean (%): " + ((String) state.humidity.mean_current) + " (over " + ((String) state.humidity.mean_count) + " measurements)";
+  fileWriteWithTimestamp(state.current_files.file_mdat, mdat_string, &state.time_clock);
     
   state.humidity.mean_count = 0;
   state.humidity.mean_current = 0;

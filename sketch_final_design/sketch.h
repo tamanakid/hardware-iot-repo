@@ -6,6 +6,7 @@
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
+#include <SHT21.h>
 #include "time.h"
 
 #include "scheduler.h"
@@ -74,6 +75,7 @@ typedef struct {
   struct tm time_clock;
   t_files current_files;
   bool is_ntp_updated;
+  bool is_first_wifi_connect;
 } t_global_state;
 
 
@@ -110,6 +112,9 @@ extern ESP8266WebServer server;
 extern WiFiUDP UdpInstance;
 extern SHT21 Sht;
 extern t_global_state state;
+
+extern String FILE_PREFIX;
+extern t_files FILE_SUFFIXES;
 
 
 #endif // _SKETCH_H

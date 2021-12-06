@@ -39,16 +39,12 @@ void taskTemperature() {
   // Serial.print("task:temperature> Temperature alarm is ");
   // Serial.println(state.temperature.is_alarm ? "ON" : "OFF");
 
-  char time_char[8];
-  sprintf(time_char, "%02d:%02d%:%02d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec);
-  String time_string = (String)time_char;
-  
-  String dat_string = time_string + " - T(ºC): " + ((String) state.temperature.current.value);
-  fileWrite(state.current_files.file_dat, dat_string);
+  String dat_string = "T(ºC): " + ((String) state.temperature.current.value);
+  fileWriteWithTimestamp(state.current_files.file_dat, dat_string, &state.time_clock);
 
   if (state.temperature.is_alarm) {
-    String log_string = time_string + " - ALARM (Temperature) - Value: " + ((String) state.temperature.current.value) + " - Threshold: " + ((String) state.temperature.threshold);
-    fileWrite(state.current_files.file_log, log_string);
+    String log_string = "ALARM (Temper'e) - Value: " + ((String) state.temperature.current.value) + " - Threshold: " + ((String) state.temperature.threshold);
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   }
 }
 
@@ -72,6 +68,9 @@ void temperatureMeanReadAndReset () {
 
   // Serial.print("task:temperature> New temperature mean: ");
   // Serial.println(state.temperature.mean_current);
+
+  String mdat_string = "Temper'e Mean(ºC): " + ((String) state.temperature.mean_current) + " (over " + ((String) state.temperature.mean_count) + " measurements)";
+  fileWriteWithTimestamp(state.current_files.file_mdat, mdat_string, &state.time_clock);
   
   state.temperature.mean_count = 0;
   state.temperature.mean_current = 0;
