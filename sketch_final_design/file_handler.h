@@ -4,5 +4,7 @@
 
 String fileRead (String fileURI);
 
+bool fileWrite (String fileURI, String contents);
+
 
 #endif // _FILE_HANDLER_H

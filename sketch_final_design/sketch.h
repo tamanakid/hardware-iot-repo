@@ -27,13 +27,11 @@ enum e_scheduler_action {
 typedef e_scheduler_action t_scheduler_action;
 
 
-enum e_file_types {
-  FILE_DAT,
-  FILE_MDAT,
-  FILE_LOG,
-};
-
-typedef e_file_types t_file_types;
+typedef struct {
+  String file_dat;
+  String file_mdat;
+  String file_log;
+} t_files;
 
 
 typedef struct {
@@ -70,11 +68,12 @@ typedef struct {
 
 
 typedef struct {
-  // Temperature
   t_temperature_info temperature;
   t_humidity_info humidity;
   bool is_server_active;
   struct tm time_clock;
+  t_files current_files;
+  bool is_ntp_updated;
 } t_global_state;
 
 

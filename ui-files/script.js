@@ -311,7 +311,9 @@ async function onFetchFileContent (event) {
         displayElement.classList.add('storage_display--no-file');
         
         const filename = target.getAttribute('name');
-        const fileContent = await endpoints.getFileFromStorage(filename);
+        let fileContent = await endpoints.getFileFromStorage(filename);
+        fileContent = fileContent.replaceAll('���', '\n');
+        fileContent = fileContent.replaceAll('��', '\n');
         
         displayElement.innerHTML = '';
         displayElement.classList.remove('storage_display--no-file');

@@ -57,7 +57,13 @@ t_global_state state = {
     tm_mday: 0,
     tm_mon: 0,
     tm_year: 0,
-  }
+  },
+  current_files: {
+    file_dat: "",
+    file_mdat: "",
+    file_log: "",
+  },
+  is_ntp_updated: false,
   /*
   measures: {
     values: { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

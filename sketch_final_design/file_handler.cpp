@@ -33,3 +33,22 @@ String fileRead (String fileURI) {
     
     return myString;
 }
+
+
+
+bool fileWrite (String fileURI, String contents) {
+  File file = SPIFFS.open(fileURI, "a");
+  
+  if (!file) {
+    Serial.print("Error opening file for append: ");
+    Serial.println(fileURI);
+    return false;
+  }
+
+  file.println(contents + "\n");
+  // file.write((contents + "\n").c_str(), contents.length() + 1);
+
+  file.close();
+
+  return true;
+}
