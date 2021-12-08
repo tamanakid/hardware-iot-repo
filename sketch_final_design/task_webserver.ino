@@ -62,6 +62,7 @@ void setupWebServer() {
 
   server.on("/api/files/all", handleFilesGetAll);
   server.on("/api/files/get", handleFilesGet);
+  server.on("/api/files/delete", handleFilesDelete);
   
   server.on("/", []() {
     server.sendHeader("Location", String("/index.html"), true);
@@ -267,8 +268,8 @@ void handleChangeTemperatureThreshold () {
     
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
   } else {
-    int threshold = state.temperature.threshold;
-    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", state.temperature.threshold);
+    int threshold = (int) state.temperature.threshold;
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", threshold);
   }
 
   server.send(200, "application/json", json);
@@ -285,7 +286,7 @@ void handleChangeHumidityThreshold () {
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
   } else {
     int threshold = state.humidity.threshold;
-    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", state.temperature.threshold);
+    sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", threshold);
   }
 
   server.send(200, "application/json", json);
@@ -299,22 +300,27 @@ void handleFilesGetAll() {
   Dir dir = SPIFFS.openDir("");
 
   int count = 0;
-  char filename[50];
+  char filename_char[50];
+  
   while (dir.next()) {
-    filename[0] = 0;
+    String filename = dir.fileName();
+    if (filename.startsWith("/ui/")) {
+      continue;
+    }
     
+    filename_char[0] = 0;
     if (count > 0) {
       strcat(json, ",");
     }
     count++;
 
     // Serial.print("File found: ");
-    // Serial.print(dir.fileName());
+    // Serial.print(filename);
     // Serial.print(" - Size: ");
     // Serial.println (dir.fileSize());
 
-    sprintf(filename, "\"%s\"", dir.fileName().c_str());    
-    strcat(json, filename);
+    sprintf(filename_char, "\"%s\"", filename.c_str());    
+    strcat(json, filename_char);
   }
   strcat(json, "]");
 
@@ -348,6 +354,22 @@ void handleFilesGet() {
 
   // server.send(200, "application/json;charset=UTF-8", json);
   handleFile(&json, json.length(), "application/json;charset=UTF-8");
+}
+
+
+void handleFilesDelete() {
+  Dir dir = SPIFFS.openDir("");
+
+  while (dir.next()) {
+    String filename = dir.fileName();
+    if (filename.startsWith("/ui/")) {
+      continue;
+    }
+
+    SPIFFS.remove(filename);
+  }
+
+  handleFilesGetAll();
 }
 
 

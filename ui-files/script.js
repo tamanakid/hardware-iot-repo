@@ -67,17 +67,15 @@ function getFileFromStorage (filename) {
 }
 
 async function deleteFlash () {
-	const endpointUrl = `/delete-flash`;
+	const endpointUrl = `/api/files/delete`;
 
-	const response = {
-			success: true,
-	};
-
-	return new Promise((resolve, reject) => {
-			setTimeout(() => {
-					resolve(response);
-			}, 4000);
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "GET" }, function (response) {
+			resolve(response);
+		});
 	});
+
+    return promise;
 }
 
 
@@ -272,15 +270,9 @@ const fileIcon = `
     </svg>
 `;
 
-async function onFetchStorageFiles () {
-    const listElement = document.getElementById('storage_nav_list');
-    
-    listElement.appendChild(renderLoader('medium'));
-
-    const filenames = await endpoints.getAllFilesFromStorage();
-    
+function onRenderStorageFiles (filenames, listElement) {
     listElement.innerHTML = '';
-
+    
     filenames.forEach(filename => {
         const fileElement = document.createElement('li');
 
@@ -292,6 +284,16 @@ async function onFetchStorageFiles () {
         
         listElement.appendChild(fileElement);
     });
+}
+
+async function onFetchStorageFiles () {
+    const listElement = document.getElementById('storage_nav_list');
+    
+    listElement.appendChild(renderLoader('medium'));
+
+    const filenames = await endpoints.getAllFilesFromStorage();
+
+    onRenderStorageFiles(filenames, listElement);
 }
 
 async function onFetchFileContent (event) {
@@ -342,12 +344,13 @@ async function onStorageDelete () {
         const listElement = document.getElementById('storage_nav_list');
         listElement.appendChild(renderLoader('medium'));
 
-        await endpoints.deleteFlash();
+        const displayElement = document.getElementById('storage_display');
+        displayElement.innerHTML = 'Select a file to view its contents';
+        displayElement.classList.add('storage_display--no-file');
 
-        listElement.innerHTML = '';
-        
-        // in the end
-        await onFetchStorageFiles();
+        const undeletedFiles = await endpoints.deleteFlash();
+
+        onRenderStorageFiles(undeletedFiles, listElement);
     }
 
 }

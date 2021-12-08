@@ -38,7 +38,7 @@ void updateNTP() {
 
   char ntp_time[50];
   sprintf(ntp_time, "%02d:%02d:%02d - %02d/%02d/%04d", state.time_clock.tm_hour, state.time_clock.tm_min, state.time_clock.tm_sec, state.time_clock.tm_mday, state.time_clock.tm_mon, state.time_clock.tm_year);
-  Serial.print("Request timestamp to NTP server complete:");
+  Serial.print("Request timestamp to NTP server complete: ");
   Serial.println(ntp_time);
 
   String log_string = "NTP Request: " + (String)ntp_time;
@@ -70,9 +70,9 @@ void fileSetupLogs() {
   fileSetup(&state.current_files.file_log, FILE_SUFFIXES.file_log, &state.time_clock);
 
   // Write current rate & thresholds
-  String temp_rate_and_timestamp = "Temper'e - Current rate: " + (String)task_temperature->schedule_ticks/10 + " (secs) - Threshold: " + (String)state.temperature.threshold + " (ºC)";
+  String temp_rate_and_timestamp = "Temper'e - Current rate: " + (String)(task_temperature->schedule_ticks/10) + " (secs) - Threshold: " + (String)state.temperature.threshold + " (ºC)";
   fileWriteWithTimestamp(state.current_files.file_log, temp_rate_and_timestamp, &state.time_clock);
-  String humi_rate_and_timestamp = "Humidity - Current rate: " + (String)task_humidity->schedule_ticks/10 + " (secs) - Threshold: " + (String)state.humidity.threshold + " (%)";
+  String humi_rate_and_timestamp = "Humidity - Current rate: " + (String)(task_humidity->schedule_ticks/10) + " (secs) - Threshold: " + (String)state.humidity.threshold + " (%)";
   fileWriteWithTimestamp(state.current_files.file_log, humi_rate_and_timestamp, &state.time_clock);
 }
 
