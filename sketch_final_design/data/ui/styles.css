@@ -121,7 +121,6 @@ section#container {
 	display: none;
 }
 
-
 .measure {
 	display: flex;
 	flex-direction: column;
@@ -319,10 +318,10 @@ section#container {
 
 
 
-section#alarm {
+section#sidebar {
 	height: calc(100vh - 4em);
 	display: grid;
-	grid-template-rows: 4em repeat(2, 8em);
+	grid-template-rows: 4em repeat(3, 8em) 4em;
 	justify-content: center;
 	justify-items: center;
 	padding: 2em 1em;
@@ -358,6 +357,34 @@ section#alarm {
 	border: 0.5em double #ccd;
 }
 
+.clock {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.7em;
+}
+#clock_value {
+	font-size: 1.5em;
+	margin-bottom: 0.5em;
+}
+
+.clock input {
+	width: 3em;
+	float: right;
+}
+.clock button {
+	margin-top: 1em;
+	margin-left: auto;
+	padding: 0.5em 1em;
+	background: #004;
+	color: #eee;
+	border: 1px solid #ccd;
+	border-radius: 10px;
+}
+.clock button:hover {
+	background: #ccd;
+	color: #004;
+	cursor: pointer;
+}
 
 
 
@@ -376,57 +403,3 @@ section#alarm {
 	border-radius: 1em;
 	width: 50%;
 }
-
-
-/* 
-.measure_block {
-	padding: 0.25em 1em;
-}
-
-.measure_current {
-	display: flex;
-	align-items: center;
-}
-.measure_current_value {
-	font-size: 1.2em;
-	color: #00a;
-	padding: 0 0.25em 0 0.5em;
-}
-
-
-.measure_means {
-	display: flex;
-	flex-direction: column;
-}
-
-.measure_means > ul {
-	margin-top: 0.5em;
-}
-
-button {
-	background: #fee;
-	padding: 1em;
-	font-size: 1.25em;
-	border: 2px solid #d77;
-	border-radius: 1em;
-}
-
-div.alarm-led {
-	width: 50px;
-	height: 50px;
-	border-radius: 50px;
-	border: 1em double #fff;
-	margin: 1em;
-}
-
-div.alarm-led-on {
-	background: #f00
-}
-
-div.alarm-led-off {
-	background: none
-}
-
-a {
-	text-decoration: none;
-} */

@@ -38,6 +38,32 @@ function changeConfig (tab, configField, params) {
 	return promise;
 }
 
+/** Clock endpoints */
+
+function getClock () {
+    const endpointUrl = '/api/clock/get';
+
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "GET" }, function (response) {
+			resolve(response);
+		});
+	});
+
+	return promise;
+}
+
+function setClock (params) {
+    const endpointUrl = '/api/clock/set';
+
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "POST", params }, function (response) {
+			resolve(response.value);
+		});
+	});
+
+	return promise;
+}
+
 /** Storage endpoints */
 
 function getAllFilesFromStorage () {
@@ -82,6 +108,8 @@ async function deleteFlash () {
 const endpoints = {
 	getMeasurementValues,
     changeConfig,
+    getClock,
+    setClock,
 	getAllFilesFromStorage,
 	getFileFromStorage,
 	deleteFlash,
@@ -259,6 +287,28 @@ humiThresSubmitBtn.addEventListener('click', () => onSubmitConfig('humi', 'thres
 
 
 
+const clockValueEl = document.getElementById('clock_value');
+const clockHourInput = document.getElementById('clock_set_hour');
+const clockMinuteInput = document.getElementById('clock_set_min');
+
+async function onGetClock () {
+    const value = await endpoints.getClock();
+    clockValueEl.innerHTML = `${value.hour}:${value.minute}`;
+}
+
+setInterval(onGetClock, 30000);
+
+async function onSubmitClock () {
+    const params = `hour=${clockHourInput.value}&minute=${clockMinuteInput.value}`;
+    const value = await endpoints.setClock(params);
+    clockValueEl.innerHTML = `${value.hour}:${value.minute}`;
+    clockHourInput.value = `${value.hour}`;
+    clockMinuteInput.value = `${value.minute}`;
+}
+
+const clockSubmitEl = document.getElementById('clock_submit');
+clockSubmitEl.addEventListener('click', onSubmitClock);
+
 
 
 
@@ -357,7 +407,6 @@ async function onStorageDelete () {
 
 const storageDeleteEl = document.getElementById('storage_delete');
 storageDeleteEl.addEventListener('click', onStorageDelete);
-
 
 
 

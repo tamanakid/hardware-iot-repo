@@ -60,6 +60,9 @@ void setupWebServer() {
   server.on("/api/temp/thres", handleChangeTemperatureThreshold);
   server.on("/api/humi/thres", handleChangeHumidityThreshold);
 
+  server.on("/api/clock/get", handleClockGet);
+  server.on("/api/clock/set", handleClockSet);
+
   server.on("/api/files/all", handleFilesGetAll);
   server.on("/api/files/get", handleFilesGet);
   server.on("/api/files/delete", handleFilesDelete);
@@ -291,6 +294,42 @@ void handleChangeHumidityThreshold () {
 
   server.send(200, "application/json", json);
 }
+
+
+void handleClockGet () {
+  char json[500];
+
+  int hour = state.time_clock.tm_hour;
+  int minute = state.time_clock.tm_min;
+  
+  sprintf(json, "{ \"hour\": \"%02d\", \"minute\": \"%02d\" }", hour, minute);
+
+  server.send(200, "application/json", json);
+}
+
+
+void handleClockSet () {
+  char json[500];
+  
+  if (server.hasArg("hour") && server.hasArg("minute")) {
+    int hour = server.arg("hour").toInt();
+    int minute = server.arg("minute").toInt();
+
+    state.time_clock.tm_hour = hour;
+    state.time_clock.tm_min = minute;
+    state.time_clock.tm_sec = 0;
+    
+    sprintf(json, "{ \"success\": true, \"value\": { \"hour\": \"%02d\", \"minute\": \"%02d\" } }", hour, minute);
+    
+  } else {
+    int hour = state.time_clock.tm_hour;
+    int minute = state.time_clock.tm_min;
+    sprintf(json, "{ \"success\": false, \"value\": { \"hour\": \"%02d\", \"minute\": \"%02d\" }, \"message\": \"The 'hour' and/or 'minute' parameters are missing from the request.\" }", hour, minute);
+  }
+
+  server.send(200, "application/json", json);
+}
+
 
 
 void handleFilesGetAll() {

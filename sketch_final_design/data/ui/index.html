@@ -351,7 +351,7 @@
 
   </section>
 
-  <section id="alarm">
+  <section id="sidebar">
     <span>Alarms</span>
     <div class="alarm_block">
       <span>Temperature</span>
@@ -364,6 +364,12 @@
       <div class="alarm_block_led_outside">
         <div class="alarm_block_led_inside" id="alarm_led_humi"></div>
       </div>
+    </div>
+    <div class="clock">
+      <span id="clock_value"></span>
+      <div>Hour: <input id="clock_set_hour" min=0 max=23/></div>
+      <div>Minute: <input id="clock_set_min" min=0 max=59/></div>
+      <button id="clock_submit">Set new time</button>
     </div>
   </section>
 

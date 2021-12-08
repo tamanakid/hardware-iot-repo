@@ -318,10 +318,10 @@ section#container {
 
 
 
-section#alarm {
+section#sidebar {
 	height: calc(100vh - 4em);
 	display: grid;
-	grid-template-rows: 4em repeat(2, 8em);
+	grid-template-rows: 4em repeat(3, 8em) 4em;
 	justify-content: center;
 	justify-items: center;
 	padding: 2em 1em;
@@ -357,6 +357,34 @@ section#alarm {
 	border: 0.5em double #ccd;
 }
 
+.clock {
+	display: flex;
+	flex-direction: column;
+	font-size: 0.7em;
+}
+#clock_value {
+	font-size: 1.5em;
+	margin-bottom: 0.5em;
+}
+
+.clock input {
+	width: 3em;
+	float: right;
+}
+.clock button {
+	margin-top: 1em;
+	margin-left: auto;
+	padding: 0.5em 1em;
+	background: #004;
+	color: #eee;
+	border: 1px solid #ccd;
+	border-radius: 10px;
+}
+.clock button:hover {
+	background: #ccd;
+	color: #004;
+	cursor: pointer;
+}
 
 
 
