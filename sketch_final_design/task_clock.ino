@@ -41,12 +41,12 @@ void updateNTP() {
   Serial.print("Request timestamp to NTP server complete: ");
   Serial.println(ntp_time);
 
-  String log_string = "NTP Request: " + (String)ntp_time;
-  fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
-
   if (!state.is_ntp_updated) {
     fileSetupLogs();
   }
+
+  String log_string = "NTP Request: " + (String)ntp_time;
+  fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
 
   if (state.is_first_wifi_connect) {
     String log_string = "Connected to WiFi."; // TODO: WiFi name?
