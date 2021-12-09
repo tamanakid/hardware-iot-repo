@@ -4,7 +4,8 @@
 // Library dependencies
 
 #include <Arduino.h>
-#include <ESP8266WebServer.h>
+// #include <ESP8266WebServer.h>
+#include <ESPAsyncWebServer.h>
 #include <WiFiUdp.h>
 #include <SHT21.h>
 #include "time.h"
@@ -108,7 +109,8 @@ void humidityMeanReadAndReset(void);
 
 extern schedulerTask *task_wifi_connect, *task_web_server, *task_measurements, *task_humidity, *task_clock;
 
-extern ESP8266WebServer server;
+// extern ESP8266WebServer server;
+extern AsyncWebServer server;
 extern WiFiUDP UdpInstance;
 extern SHT21 Sht;
 extern t_global_state state;

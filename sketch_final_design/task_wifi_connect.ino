@@ -1,6 +1,8 @@
 #include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <WiFiUdp.h>
+// #include <ESP8266WebServer.h>
+// #include <WiFiUdp.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 
 #include "hardware.h"
 #include "hardware_d1mini.h"
@@ -17,7 +19,9 @@ int wifi_led = HIGH; // Keep in mind: on when LOW, off when HIGH
 unsigned int udp_port_http = 80;
 WiFiUDP UdpInstance;
 
-ESP8266WebServer server = ESP8266WebServer(udp_port_http);
+// ESP8266WebServer server = ESP8266WebServer(udp_port_http);
+AsyncWebServer server(udp_port_http);
+
 
 
 void setupWifiConnect () {
