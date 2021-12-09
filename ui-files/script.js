@@ -7,8 +7,13 @@ function onRequest(endpoint, headers, callback) {
 	var oReq = new XMLHttpRequest();
 	oReq.addEventListener("load", reqListener);
 	oReq.open(headers.method, endpoint);
+    // if (headers.params) {
+    //     oReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    // }
     if (headers.params) {
-        oReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        headers.params.forEach(param => {
+            oReq.setRequestHeader(param.key, param.value);
+        });
     }
     oReq.send(headers.params || null);
 }
@@ -81,7 +86,8 @@ function getAllFilesFromStorage () {
 
 function getFileFromStorage (filename) {
 	const endpointUrl = `/api/files/get`;
-    const params = `filename=${filename}`;
+    // const params = `filename=${filename}`;
+    const params = [{ key: 'filename', value: filename }]
 
 	const promise = new Promise((resolve, reject) => {
 		onRequest(endpointUrl, { method: "POST", params }, function (response) {
@@ -251,7 +257,8 @@ renderMeasurementValues('humi');
 
 async function onSubmitConfig (tab, configField) {
     const rateSelector = document.getElementById(`config_${tab}_${configField}`);
-    const params = `value=${rateSelector.value}`;
+    // const params = `value=${rateSelector.value}`;
+    const params = [{ key: 'value', value: rateSelector.value }];
 
     // Validate Threshold
     if (configField === 'thres') {
@@ -299,7 +306,11 @@ async function onGetClock () {
 setInterval(onGetClock, 30000);
 
 async function onSubmitClock () {
-    const params = `hour=${clockHourInput.value}&minute=${clockMinuteInput.value}`;
+    // const params = `hour=${clockHourInput.value}&minute=${clockMinuteInput.value}`;
+    const params = [
+        { key: 'hour', value: clockHourInput.value },
+        { key: 'minute', value: clockMinuteInput.value },
+    ];
     const value = await endpoints.setClock(params);
     clockValueEl.innerHTML = `${value.hour}:${value.minute}`;
     clockHourInput.value = `${value.hour}`;

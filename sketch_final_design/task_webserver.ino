@@ -65,7 +65,7 @@ void setupWebServer() {
   server.on("/api/clock/set", HTTP_POST, handleClockSet);
 
   server.on("/api/files/all", HTTP_GET, handleFilesGetAll);
-  server.on("/api/files/get", HTTP_GET, handleFilesGet);
+  server.on("/api/files/get", HTTP_POST, handleFilesGet);
   server.on("/api/files/delete", HTTP_GET, handleFilesDelete);
   
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -394,9 +394,14 @@ void handleFilesGet(AsyncWebServerRequest *request) {
       json += "\" }";
       
     } else {
+      Serial.print("Reading file: ");
+      Serial.println(filename);
+      
       String content = fileRead(filename);
       // content.replace("\n", "\\n");
       content.replace("\r", "\\n");
+
+      Serial.print("File read!");
 
       json = "{ \"success\": true, \"content\": \"";
       json += content;
