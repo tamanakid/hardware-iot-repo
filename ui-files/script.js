@@ -1,6 +1,10 @@
 function onRequest(endpoint, headers, callback) {
 	function reqListener () {
-		callback(JSON.parse(this.responseText));
+        if (headers.isPlainResponse) {
+            callback(this.responseText);
+        } else {
+            callback(JSON.parse(this.responseText));
+        }
 		// removeEventListener after callback?
 	}
 	
@@ -88,10 +92,11 @@ function getFileFromStorage (filename) {
 	const endpointUrl = `/api/files/get`;
     // const params = `filename=${filename}`;
     const params = [{ key: 'filename', value: filename }]
+    const isPlainResponse = true;
 
 	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "POST", params }, function (response) {
-			resolve(response.content);
+		onRequest(endpointUrl, { method: "POST", params, isPlainResponse }, function (response) {
+			resolve(response);
 		});
 	});
 

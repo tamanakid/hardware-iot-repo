@@ -16,12 +16,27 @@ extern AsyncWebServer server;
 
 extern schedulerTask *task_temperature, *task_humidity;
 
+/*
 String indexHTML;
 String stylesCSS;
 String scriptJS;
-
-
+*/
+/*
+char *indexHTML PROGMEM;
+char *stylesCSS PROGMEM;
+char *scriptJS PROGMEM;
+*/
 void setupWebServerFiles() {
+  if (!SPIFFS.begin()) {
+    Serial.println("Error on SPIFFS.begin()");
+  }
+  // sprintf(indexHTML, fileRead("/ui/index.html").c_str());
+  // sprintf(stylesCSS, fileRead("/ui/styles.css").c_str());
+  // sprintf(scriptJS, fileRead("/ui/script.js").c_str());
+  // indexHTML = fileRead("/ui/index.html").c_str();
+  // stylesCSS = fileRead("/ui/styles.css").c_str();
+  // scriptJS = fileRead("/ui/script.js").c_str();
+  /*
   indexHTML = fileRead("/ui/index.html");
   if (indexHTML.equals("Error")){
     Serial.println("Error reading 'index.html' from flash.");
@@ -39,6 +54,7 @@ void setupWebServerFiles() {
     Serial.println("Error reading 'script.js' from flash.");
     return;
   }
+  */
 }
 
 
@@ -48,9 +64,13 @@ void setupWebServer() {
   pinMode(MINID1_PIN_D0, OUTPUT);
   digitalWrite(MINID1_PIN_D0, LOW);
 
-  server.on("/index.html", HTTP_GET, handleIndex);
-  server.on("/styles.css", HTTP_GET, handleStyles);
-  server.on("/script.js", HTTP_GET, handleScriptJS);
+  // server.on("/index.html", HTTP_GET, handleIndex);
+  // server.on("/styles.css", HTTP_GET, handleStyles);
+  // server.on("/script.js", HTTP_GET, handleScriptJS);
+  server.serveStatic("/", SPIFFS, "/").setDefaultFile("/ui/index.html"); //.setCacheControl("max-age=60");
+  // server.serveStatic("/index.html", SPIFFS, "/ui/index.html");
+  // server.serveStatic("/styles.css", SPIFFS, "/ui/styles.css");
+  // server.serveStatic("/script.js", SPIFFS, "/ui/script.js");
 
   server.on("/api/temp", HTTP_GET, handleTemperatureRequest);
   server.on("/api/humi", HTTP_GET, handleHumidityRequest);
@@ -67,12 +87,14 @@ void setupWebServer() {
   server.on("/api/files/all", HTTP_GET, handleFilesGetAll);
   server.on("/api/files/get", HTTP_POST, handleFilesGet);
   server.on("/api/files/delete", HTTP_GET, handleFilesDelete);
-  
+
+  /*
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     // request->addHeader("Location", String("/index.html"), true);
     // request->send(302, "text/plain", "");
     request->redirect("/index.html");
   });
+  */
   
   server.onNotFound(handleNotFound);
 
@@ -111,30 +133,23 @@ void handleFile(String *file_content, int file_length, String content_type, Asyn
   // request->addHeader("Content-Length", (String)file_length);
   // server.send(200, content_type, "");
 
-  /*
-  for (int i = 0; i*chunk_size < file_length; i++) {
-    String chunk;
-    char content_buffer[chunk_size];
-    int content_size;
-    
-    if (i*chunk_size < (file_length - chunk_size)) {
-      chunk = file_content->substring(i*chunk_size, i*chunk_size + chunk_size);
-      content_size = chunk_size;
-    } else {
-      chunk = file_content->substring(i*chunk_size);
-      content_size = file_length - i*chunk_size;
-    }
-    
-    strcpy(content_buffer, chunk.c_str());
-
-    // Serial.println("chunk:");
-    Serial.println(content_buffer);
-
-    server.sendContent_P(content_buffer, content_size);
-  }
-  */
   AsyncWebServerResponse *response = request->beginResponse_P(200, content_type, file_content->c_str());
   response->addHeader("Content-Length", (String)file_length);
+  request->send(response);
+
+  Serial.println("File sent!");
+}
+
+void handleChunkedFile() {
+  
+}
+
+
+void handleStaticFile(String file_path, String content_type, AsyncWebServerRequest *request) {
+  // AsyncWebServerResponse *response = request->beginResponse_P(200, content_type, file_content);
+  AsyncWebServerResponse *response = request->beginResponse(SPIFFS, file_path, content_type);
+  response->addHeader("Content-Encoding", "gzip");
+  // response->addHeader("Content-Length", (String)file_length);
   request->send(response);
 
   Serial.println("File sent!");
@@ -145,20 +160,23 @@ void handleIndex (AsyncWebServerRequest *request) {
   // TODO: Get IP address for logging
   
   Serial.println("Sending index.html");
-  int file_length = indexHTML.length();
-  handleFile(&indexHTML, file_length, "text/html", request);
+  // int file_length = indexHTML.length();
+  // handleFile(&indexHTML, file_length, "text/html", request);
+  handleStaticFile("/ui/index.html.gz", "text/html", request);
 }
 
 void handleStyles (AsyncWebServerRequest *request) {
   Serial.println("Sending styles.css");
-  int file_length = stylesCSS.length();
-  handleFile(&stylesCSS, file_length, "text/css;charset=UTF-8", request);
+  // int file_length = stylesCSS.length();
+  // handleFile(&stylesCSS, file_length, "text/css;charset=UTF-8", request);
+  handleStaticFile("/ui/styles.css.gz", "text/css;charset=UTF-8", request);
 }
 
 void handleScriptJS (AsyncWebServerRequest *request) {
   Serial.println("Sending script.js");
-  int file_length = scriptJS.length();
-  handleFile(&scriptJS, file_length, "application/javascript;charset=UTF-8", request);
+  // int file_length = scriptJS.length();
+  // handleFile(&scriptJS, file_length, "application/javascript;charset=UTF-8", request);
+  handleStaticFile("/ui/script.js.gz", "application/javascript;charset=UTF-8", request);
 }
 
 
@@ -392,10 +410,15 @@ void handleFilesGet(AsyncWebServerRequest *request) {
       json = "{ \"success\": false, \"message\": \"File not found: ";
       json += filename;
       json += "\" }";
-      
+
+      request->send(200, "application/json;charset=UTF-8", json);
+      return;
     } else {
-      Serial.print("Reading file: ");
+      // String filename_path = "/" + filename;
+      Serial.print("api/files/get - file: ");
       Serial.println(filename);
+      request->send(SPIFFS, filename, "text/plain;charset=UTF-8");
+      return;
       
       String content = fileRead(filename);
       // content.replace("\n", "\\n");
@@ -410,6 +433,8 @@ void handleFilesGet(AsyncWebServerRequest *request) {
     }
   } else {
     json = "{ \"success\": false, \"message\": \"The 'filename' parameter is missing from the request.\" }";
+    request->send(200, "application/json;charset=UTF-8", json);
+    return;
   }
 
   // server.send(200, "application/json;charset=UTF-8", json);
@@ -436,6 +461,8 @@ void handleFilesDelete(AsyncWebServerRequest *request) {
 
 void handleNotFound(AsyncWebServerRequest *request) {
   char json[500];
+
+  Serial.println("URL requested was not found");
 
   sprintf(json,
     "{ \"message\": \"endpoint not found\", \"URI\": \"%s\", \"method\": \"%s\", \"args\": \"%s\" }",
