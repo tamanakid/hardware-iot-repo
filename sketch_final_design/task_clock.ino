@@ -20,13 +20,16 @@ NTPClient ntpClient(UdpInstance, "1.es.pool.ntp.org", utcOffsetInSeconds);
 void updateNTP() {
   time_t timestamp;
   struct tm timestamp_struct;
-  
-  Serial.println("Requesting timestamp to NTP server...");
-  ntpClient.update();
-  
-  timestamp = ntpClient.getEpochTime();
-  timestamp_struct = *localtime(&timestamp);
 
+  do {
+    Serial.println("Requesting timestamp to NTP server...");
+    ntpClient.update();
+    
+    timestamp = ntpClient.getEpochTime();
+    timestamp_struct = *localtime(&timestamp);
+    
+  } while (timestamp_struct.tm_year == 0);
+  
   state.is_ntp_updated = state.time_clock.tm_hour == timestamp_struct.tm_hour &&
                          state.time_clock.tm_min  == timestamp_struct.tm_min  &&
                          state.time_clock.tm_sec  == timestamp_struct.tm_sec;
