@@ -199,7 +199,7 @@ function renderTabMeasurements(tabMeasurements, tab) {
     
     // Measurement: Current value
     const measurementCurrentEl = document.getElementById(`measure_${tab}_current`);
-    measurementCurrentEl.innerHTML = tabMeasurements.current.value;
+    measurementCurrentEl.innerHTML = (tab === 'temp') ? onConvertTemperature(tabMeasurements.current.value) : tabMeasurements.current.value;
     const measurementCurrentTimestampEl = document.getElementById(`measure_${tab}_current_timestamp`);
     measurementCurrentTimestampEl.innerHTML = tabMeasurements.current.timestamp;
 
@@ -209,7 +209,7 @@ function renderTabMeasurements(tabMeasurements, tab) {
             const measurementMeanEl = document.getElementById(`measure_${tab}_mean${index}`);
             if (mean.value) {
                 const measurementMeanValueEl = document.getElementById(`measure_${tab}_mean${index}_value`);
-                measurementMeanValueEl.innerHTML = mean.value;
+                measurementMeanValueEl.innerHTML = (tab === 'temp') ? onConvertTemperature(mean.value) : mean.value;
                 measurementMeanEl.style.display = 'list-item';
             } else {
                 measurementMeanEl.style.display = 'none';
@@ -220,13 +220,13 @@ function renderTabMeasurements(tabMeasurements, tab) {
     // Measurement: Record max and min
     if (tabMeasurements.recordMax) {
         const measurementMaxEl = document.getElementById(`measure_${tab}_max`);
-        measurementMaxEl.innerHTML = tabMeasurements.recordMax.value;
+        measurementMaxEl.innerHTML = (tab === 'temp') ? onConvertTemperature(tabMeasurements.recordMax.value) : tabMeasurements.recordMax.value;
         const measurementMaxTimestampEl = document.getElementById(`measure_${tab}_max_timestamp`);
         measurementMaxTimestampEl.innerHTML = tabMeasurements.recordMax.timestamp;
     }
     if (tabMeasurements.recordMin) {
         const measurementMinEl = document.getElementById(`measure_${tab}_min`);
-        measurementMinEl.innerHTML = tabMeasurements.recordMin.value;
+        measurementMinEl.innerHTML = (tab === 'temp') ? onConvertTemperature(tabMeasurements.recordMin.value) : tabMeasurements.recordMin.value;
         const measurementMinTimestampEl = document.getElementById(`measure_${tab}_min_timestamp`);
         measurementMinTimestampEl.innerHTML = tabMeasurements.recordMin.timestamp;
     }
@@ -282,7 +282,8 @@ async function onSubmitConfig (tab, configField) {
         }
         const valueEl = document.getElementById(`config_${tab}_${configField}_value`);
         if (valueEl) {
-            valueEl.innerHTML = response.value;
+            const newValue = (tab === 'temp' && configField === 'thres') ? onConvertTemperature(response.value) : response.value;
+            valueEl.innerHTML = newValue;
         }
     }
 }
@@ -324,6 +325,82 @@ async function onSubmitClock () {
 
 const clockSubmitEl = document.getElementById('clock_submit');
 clockSubmitEl.addEventListener('click', onSubmitClock);
+
+
+
+let currentTempUnits = 'c';
+
+function onChangeTemperatureUnits (event) {
+    const previousTempUnits = currentTempUnits;
+    currentTempUnits = event.target.value;
+
+    let currentTempLabel = '';
+    switch (currentTempUnits) {
+        case 'c':
+            currentTempLabel = 'ºC';
+            break;
+        case 'f':
+            currentTempLabel = 'ºF';
+            break;
+        case 'k':
+            currentTempLabel = 'K';
+            break;
+    }
+
+    const tempUnitElements = document.getElementById('content_temp').querySelectorAll('.measure_value_units');
+    
+    for (let i = 0; i < tempUnitElements.length; i++) {
+        tempUnitElements[i].innerHTML = currentTempLabel;
+        
+        const currentValueEl = tempUnitElements[i].previousElementSibling;
+        const value = currentValueEl.innerHTML;
+        const numberValue = Number(value);
+
+        if (value && !isNaN(numberValue)) {
+            const deconvertedValue = onDeconvertTemperature(numberValue, previousTempUnits);
+            currentValueEl.innerHTML = onConvertTemperature(deconvertedValue);
+        }
+    }
+}
+
+function onConvertTemperature (value) {
+    if (value === null)
+        return null;
+    
+    let convertedValue = '';
+    switch (currentTempUnits) {
+        case 'c':
+            convertedValue = Number(value);
+            break;
+        case 'f':
+            convertedValue = (value*1.8) + 32;
+            break;
+        case 'k':
+            convertedValue = value + 273.2;
+            break;
+    }
+    return convertedValue.toFixed(1);
+}
+
+function onDeconvertTemperature (value, previousUnits) {
+    let deconvertedValue = null;
+    switch (previousUnits) {
+        case 'c':
+            deconvertedValue = Number(value);
+            break;
+        case 'f':
+            deconvertedValue = (value - 32)/1.8; 
+            break;
+        case 'k':
+            deconvertedValue = value - 273.2;
+            break;
+    }
+    return deconvertedValue;
+}
+
+
+const tempUnitsSelect = document.getElementById('config_temp_units');
+tempUnitsSelect.addEventListener('change', onChangeTemperatureUnits);
 
 
 
@@ -382,6 +459,7 @@ async function onFetchFileContent (event) {
         let fileContent = await endpoints.getFileFromStorage(filename);
         fileContent = fileContent.replaceAll('���', '\n');
         fileContent = fileContent.replaceAll('��', '\n');
+        fileContent = fileContent.replaceAll('\n\r\n', '\n');
         
         displayElement.innerHTML = '';
         displayElement.classList.remove('storage_display--no-file');
