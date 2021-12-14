@@ -27,6 +27,7 @@ void setupWebServerFiles() {
 void setupWebServer() {
   Serial.println("task:webServer> Setup");
 
+  pinMode(MINID1_PIN_A0, INPUT);
   pinMode(MINID1_PIN_D0, OUTPUT);
   digitalWrite(MINID1_PIN_D0, LOW);
 
@@ -43,6 +44,8 @@ void setupWebServer() {
 
   server.on("/api/clock/get", HTTP_GET, handleClockGet);
   server.on("/api/clock/set", HTTP_POST, handleClockSet);
+
+  server.on("/api/battery", HTTP_GET, handleBatteryLevelRead);
 
   server.on("/api/files/all", HTTP_GET, handleFilesGetAll);
   server.on("/api/files/get", HTTP_POST, handleFilesGet);
@@ -328,6 +331,8 @@ void handleFilesGet(AsyncWebServerRequest *request) {
 }
 
 
+
+
 void handleFilesDelete(AsyncWebServerRequest *request) {
   Dir dir = SPIFFS.openDir("");
 
@@ -341,6 +346,27 @@ void handleFilesDelete(AsyncWebServerRequest *request) {
   }
 
   handleFilesGetAll(request);
+}
+
+
+
+float analogMap(float x, float in_min, float in_max, float out_min, float out_max) {
+   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+void handleBatteryLevelRead(AsyncWebServerRequest *request) {
+  char json[500];
+
+  float battery_analog = analogRead(MINID1_PIN_A0);
+  float battery_mapped = analogMap(battery_analog, 0, 1023, 0.0, 3.3);
+  float battery_level = (battery_mapped - 0.15)*3;
+
+  Serial.print("Battery Level (V): ");
+  Serial.println(battery_level);
+
+  sprintf(json, "{ \"value\": \"%2.2f\" }", battery_level);
+
+  request->send(200, "application/json", json);
 }
 
 

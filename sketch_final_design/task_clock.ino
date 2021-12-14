@@ -52,8 +52,6 @@ void updateNTP() {
   fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
 
   if (state.is_first_wifi_connect) {
-    String log_string = "Connected to WiFi."; // TODO: WiFi name?
-    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
     state.is_first_wifi_connect = false;
   }
   

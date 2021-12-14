@@ -20,7 +20,7 @@ void taskTemperature() {
     initial_write = true;
   }
 
-  // Serial.println("task:temperature> Reading temperature...");
+  Serial.println("task:temperature> Reading temperature...");
   
   float temperature_read = Sht.getTemperature();
   
