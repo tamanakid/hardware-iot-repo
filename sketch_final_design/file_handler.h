@@ -11,6 +11,8 @@ String fileRead (String fileURI);
 
 bool fileWrite (String fileURI, String contents);
 
+bool fileOverwrite (String fileURI, String contents);
+
 bool fileWriteWithTimestamp (String fileURI, String contents, struct tm *state_time);
 
 void fileSetup(String *state_filename, String file_suffix, struct tm *state_time);

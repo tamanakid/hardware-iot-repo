@@ -1,5 +1,9 @@
 #include <stdlib.h>
 #include <SHT21.h>
+#include <cstring>
+
+#include "FS.h"
+#include "file_handler.h"
 
 #include "hardware_d1mini.h"
 #include "sketch.h"
@@ -10,6 +14,8 @@ extern t_global_state state;
 
 void setupTemperature () {
   Wire.begin();
+
+  temperatureRecordsSetup();
 }
 
 
@@ -46,6 +52,8 @@ void taskTemperature() {
     String log_string = "ALARM (Temper'e) - Value: " + ((String) state.temperature.current.value) + " - Threshold: " + ((String) state.temperature.threshold);
     fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   }
+
+  temperatureRecordsSync();
 }
 
 
@@ -74,4 +82,72 @@ void temperatureMeanReadAndReset () {
   
   state.temperature.mean_count = 0;
   state.temperature.mean_current = 0;
+}
+
+
+
+void temperatureRecordsSetup() {
+  if (SPIFFS.exists(state.current_files.file_temp_min)) {
+    char min_contents[50];
+    sprintf(min_contents, fileRead(state.current_files.file_temp_min).c_str());
+    
+    char *values = strtok(min_contents, " measured at ");
+    state.temperature.record_min.value = atof(values);
+
+    Serial.print("Min temperature value read from file: ");
+    Serial.println(state.temperature.record_min.value);
+
+    values = strtok (NULL, " measured at ");
+    Serial.print("timestamp: ");
+    sprintf(state.temperature.record_min.timestamp, values);
+    Serial.println(state.temperature.record_min.timestamp);
+  }
+  
+  if (SPIFFS.exists(state.current_files.file_temp_max)) {
+    char max_contents[50];
+    sprintf(max_contents, fileRead(state.current_files.file_temp_max).c_str());
+    
+    char *values = strtok(max_contents, " measured at ");
+    state.temperature.record_max.value = atof(values);
+    
+    Serial.print("Max temperature value read from file: ");
+    Serial.println(state.temperature.record_max.value);
+
+    values = strtok (NULL, " measured at ");
+    Serial.print("timestamp: ");
+    sprintf(state.temperature.record_max.timestamp, values);
+    Serial.println(state.temperature.record_max.timestamp);
+  }
+}
+
+
+void temperatureRecordsSync() {
+  bool file_min_exists = SPIFFS.exists(state.current_files.file_temp_min);
+  bool file_max_exists = SPIFFS.exists(state.current_files.file_temp_max);
+  
+  if (!file_min_exists || state.temperature.record_min.value == NULL || (state.temperature.current.value < state.temperature.record_min.value)) {
+    state.temperature.record_min.value = state.temperature.current.value;
+    sprintf(state.temperature.record_min.timestamp, state.temperature.current.timestamp);
+
+    Serial.print("New min temperature value: ");
+    Serial.println(state.temperature.record_min.value);
+    
+    String file_contents = (String)state.temperature.record_min.value + " measured at " + state.temperature.record_min.timestamp;
+    fileOverwrite(state.current_files.file_temp_min, file_contents);
+    
+    Serial.println("Content written to file");
+  }
+
+  if (!file_max_exists || state.temperature.record_max.value == NULL || (state.temperature.current.value > state.temperature.record_max.value)) {
+    state.temperature.record_max.value = state.temperature.current.value;
+    sprintf(state.temperature.record_max.timestamp, state.temperature.current.timestamp);
+
+    Serial.print("New max temperature value: ");
+    Serial.println(state.temperature.record_max.value);
+    
+    String file_contents = (String)state.temperature.record_max.value + " measured at " + state.temperature.record_max.timestamp;
+    fileOverwrite(state.current_files.file_temp_max, file_contents);
+
+    Serial.println("Content written to file");
+  }
 }

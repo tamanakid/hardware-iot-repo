@@ -70,6 +70,10 @@ t_global_state state = {
     file_dat: "",
     file_mdat: "",
     file_log: "",
+    file_temp_min: "STATION99_TEMP_MIN",
+    file_temp_max: "STATION99_TEMP_MAX",
+    file_humi_min: "STATION99_HUMI_MIN",
+    file_humi_max: "STATION99_HUMI_MAX",
   },
   is_ntp_updated: false,
   is_first_wifi_connect: true,
@@ -111,7 +115,7 @@ void setup() {
 
 void loop() {
   scheduler_run();
-  delay(100);
+  delay(85);
 }
 
 

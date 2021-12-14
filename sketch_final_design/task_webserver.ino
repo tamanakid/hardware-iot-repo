@@ -106,6 +106,8 @@ void handleTemperatureRequest (AsyncWebServerRequest *request) {
     "{\
     \"current\": { \"value\": %2.1f, \"timestamp\": \"%s\"  },\
     \"means\": [{ \"value\": %s }, { \"value\": %s }, { \"value\": %s }],\
+    \"recordMin\": { \"value\": %2.1f, \"timestamp\": \"%s\"  },\
+    \"recordMax\": { \"value\": %2.1f, \"timestamp\": \"%s\"  },\
     \"config\": { \"rate\": %d, \"threshold\": %2.1f },\
     \"alarm\": %s\
     }",
@@ -114,6 +116,10 @@ void handleTemperatureRequest (AsyncWebServerRequest *request) {
     state.temperature.means[0] == NULL ? "null" : string_mean_0,
     state.temperature.means[1] == NULL ? "null" : string_mean_1,
     state.temperature.means[2] == NULL ? "null" : string_mean_2,
+    state.temperature.record_min.value,
+    state.temperature.record_min.timestamp,
+    state.temperature.record_max.value,
+    state.temperature.record_max.timestamp,
     task_temperature->schedule_ticks / 10,
     state.temperature.threshold,
     state.temperature.is_alarm ? "true" : "false"
@@ -125,7 +131,7 @@ void handleTemperatureRequest (AsyncWebServerRequest *request) {
 
 
 void handleHumidityRequest (AsyncWebServerRequest *request) {
-  char json[500];
+  char json[1000];
 
   char string_mean_0[6];
   char string_mean_1[6];
@@ -138,6 +144,8 @@ void handleHumidityRequest (AsyncWebServerRequest *request) {
     "{\
     \"current\": { \"value\": %d, \"timestamp\": \"%s\"  },\
     \"means\": [{ \"value\": %s }, { \"value\": %s }, { \"value\": %s }],\
+    \"recordMin\": { \"value\": %d, \"timestamp\": \"%s\"  },\
+    \"recordMax\": { \"value\": %d, \"timestamp\": \"%s\"  },\
     \"config\": { \"rate\": %d, \"threshold\": %d },\
     \"alarm\": %s\
     }",
@@ -146,6 +154,10 @@ void handleHumidityRequest (AsyncWebServerRequest *request) {
     state.humidity.means[0] == NULL ? "null" : string_mean_0,
     state.humidity.means[1] == NULL ? "null" : string_mean_1,
     state.humidity.means[2] == NULL ? "null" : string_mean_2,
+    state.humidity.record_min.value,
+    state.humidity.record_min.timestamp,
+    state.humidity.record_max.value,
+    state.humidity.record_max.timestamp,
     task_humidity->schedule_ticks / 10,
     state.humidity.threshold,
     state.humidity.is_alarm ? "true" : "false"

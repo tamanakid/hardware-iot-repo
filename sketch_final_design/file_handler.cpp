@@ -55,6 +55,23 @@ bool fileWrite (String fileURI, String contents) {
   return true;
 }
 
+bool fileOverwrite (String fileURI, String contents) {
+  File file = SPIFFS.open(fileURI, "w");
+  
+  if (!file) {
+    Serial.print("Error opening file for append: ");
+    Serial.println(fileURI);
+    return false;
+  }
+
+  file.println(contents + "\n");
+  // file.write((contents + "\n").c_str(), contents.length() + 1);
+
+  file.close();
+
+  return true;
+}
+
 
 bool fileWriteWithTimestamp (String fileURI, String contents, struct tm *state_time) {
   char time_char[11];

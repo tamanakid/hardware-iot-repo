@@ -33,6 +33,10 @@ typedef struct {
   String file_dat;
   String file_mdat;
   String file_log;
+  String file_temp_min;
+  String file_temp_max;
+  String file_humi_min;
+  String file_humi_max;
 } t_files;
 
 

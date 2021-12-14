@@ -10,7 +10,7 @@ extern SHT21 Sht;
 extern t_global_state state;
 
 void setupHumidity () {
-  
+  humidityRecordsSetup();
 }
 
 
@@ -21,7 +21,7 @@ void taskHumidity () {
     initial_write = true;
   }
 
-  // Serial.println("task:temperature> Reading humidity...");
+  // Serial.println("task:humidity> Reading humidity...");
   
   int humidity_read = Sht.getHumidity() * 100/118;
   
@@ -47,6 +47,8 @@ void taskHumidity () {
     String log_string = "ALARM (Humidity) - Value: " + ((String) state.humidity.current.value) + " - Threshold: " + ((String) state.humidity.threshold);
     fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   }
+
+  humidityRecordsSync();
 }
 
 
@@ -75,4 +77,73 @@ void humidityMeanReadAndReset () {
     
   state.humidity.mean_count = 0;
   state.humidity.mean_current = 0;
+}
+
+
+
+
+void humidityRecordsSetup() {
+  if (SPIFFS.exists(state.current_files.file_humi_min)) {
+    char min_contents[50];
+    sprintf(min_contents, fileRead(state.current_files.file_humi_min).c_str());
+    
+    char *values = strtok(min_contents, " measured at ");
+    state.humidity.record_min.value = atof(values);
+    
+    Serial.print("Min humidity value read from file: ");
+    Serial.println(state.humidity.record_min.value);
+
+    values = strtok (NULL, " measured at ");
+    Serial.print("timestamp: ");
+    sprintf(state.humidity.record_min.timestamp, values);
+    Serial.println(state.humidity.record_min.timestamp);
+  }
+  
+  if (SPIFFS.exists(state.current_files.file_humi_max)) {
+    char max_contents[50];
+    sprintf(max_contents, fileRead(state.current_files.file_humi_max).c_str());
+    
+    char *values = strtok(max_contents, " measured at ");
+    state.humidity.record_max.value = atof(values);
+
+    Serial.print("Max humidity value read from file: ");
+    Serial.println(state.humidity.record_max.value);
+
+    values = strtok (NULL, " measured at ");
+    Serial.print("timestamp: ");
+    sprintf(state.humidity.record_max.timestamp, values);
+    Serial.println(state.humidity.record_max.timestamp);
+  }
+}
+
+
+void humidityRecordsSync() {
+  bool file_min_exists = SPIFFS.exists(state.current_files.file_humi_min);
+  bool file_max_exists = SPIFFS.exists(state.current_files.file_humi_max);
+  
+  if (!file_min_exists || state.humidity.record_min.value == NULL || (state.humidity.current.value < state.humidity.record_min.value)) {
+    state.humidity.record_min.value = state.humidity.current.value;
+    sprintf(state.humidity.record_min.timestamp, state.humidity.current.timestamp);
+
+    Serial.print("New min humidity value: ");
+    Serial.println(state.humidity.record_min.value);
+    
+    String file_contents = (String)state.humidity.record_min.value + " measured at " + state.humidity.record_min.timestamp;
+    fileOverwrite(state.current_files.file_humi_min, file_contents);
+    
+    Serial.println("Content written to file");
+  }
+
+  if (!file_max_exists || state.humidity.record_max.value == NULL || (state.humidity.current.value > state.humidity.record_max.value)) {
+    state.humidity.record_max.value = state.humidity.current.value;
+    sprintf(state.humidity.record_max.timestamp, state.humidity.current.timestamp);
+
+    Serial.print("New max humidity value: ");
+    Serial.println(state.humidity.record_max.value);
+    
+    String file_contents = (String)state.humidity.record_max.value + " measured at " + state.humidity.record_max.timestamp;
+    fileOverwrite(state.current_files.file_humi_max, file_contents);
+
+    Serial.println("Content written to file");
+  }
 }

@@ -73,6 +73,18 @@ function setClock (params) {
 	return promise;
 }
 
+function getBatteryLevel () {
+    const endpointUrl = '/api/battery';
+
+	const promise = new Promise((resolve, reject) => {
+		onRequest(endpointUrl, { method: "GET" }, function (response) {
+			resolve(response.value);
+		});
+	});
+
+	return promise;
+}
+
 /** Storage endpoints */
 
 function getAllFilesFromStorage () {
@@ -121,6 +133,7 @@ const endpoints = {
     changeConfig,
     getClock,
     setClock,
+    getBatteryLevel,
 	getAllFilesFromStorage,
 	getFileFromStorage,
 	deleteFlash,
@@ -309,6 +322,7 @@ async function onGetClock () {
     clockValueEl.innerHTML = `${value.hour}:${value.minute}`;
 }
 
+onGetClock();
 setInterval(onGetClock, 30000);
 
 async function onSubmitClock () {
@@ -401,6 +415,19 @@ function onDeconvertTemperature (value, previousUnits) {
 
 const tempUnitsSelect = document.getElementById('config_temp_units');
 tempUnitsSelect.addEventListener('change', onChangeTemperatureUnits);
+
+
+
+const batteryValueEl = document.getElementById('battery_value');
+
+async function onGetBatteryLevel () {
+    const value = await endpoints.getBatteryLevel();
+    batteryValueEl.innerHTML = value;
+}
+
+onGetBatteryLevel();
+setInterval(onGetBatteryLevel, 20000);
+
 
 
 
