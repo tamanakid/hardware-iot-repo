@@ -1,4 +1,3 @@
-// #include <ESP8266WebServer.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "FS.h"
@@ -11,7 +10,6 @@
 
 
 extern t_global_state state;
-// extern ESP8266WebServer server;
 extern AsyncWebServer server;
 
 extern schedulerTask *task_temperature, *task_humidity;
@@ -33,6 +31,8 @@ void setupWebServer() {
 
   server.serveStatic("/", SPIFFS, "/ui/").setDefaultFile("index.html").setCacheControl("max-age=60");
 
+  server.on("/api/init", HTTP_GET, handlePageInit);
+
   server.on("/api/temp", HTTP_GET, handleTemperatureRequest);
   server.on("/api/humi", HTTP_GET, handleHumidityRequest);
 
@@ -52,15 +52,12 @@ void setupWebServer() {
   server.on("/api/files/delete", HTTP_GET, handleFilesDelete);
 
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    // request->addHeader("Location", String("/index.html"), true);
-    // request->send(302, "text/plain", "");
     request->redirect("/index.html");
   });
   
   server.onNotFound(handleNotFound);
 
   Serial.println("task:webServer> Setup complete");
-  // server.begin();
 }
 
 
@@ -83,6 +80,24 @@ void resetWebServer() {
 }
 
 
+void handlePageInit (AsyncWebServerRequest *request) {
+  char json[50];
+
+  IPAddress clientIP = request->client()->remoteIP();
+  String client_ip_string =
+    String(clientIP[0]) + String(".") +
+    String(clientIP[1]) + String(".") +
+    String(clientIP[2]) + String(".") +
+    String(clientIP[3]);
+  
+  sprintf(json, "{ \"success\": true, \"IP\": \"%s\" }", client_ip_string.c_str());
+  request->send(200, "application/json", json);
+  
+  String log_string = "New page request from client with IP " + client_ip_string;
+  fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
+}
+
+
 void handleTemperatureRequest (AsyncWebServerRequest *request) {
   char json[1000];
   
@@ -92,15 +107,6 @@ void handleTemperatureRequest (AsyncWebServerRequest *request) {
   sprintf(string_mean_0, "%2.1f", state.temperature.means[0]);
   sprintf(string_mean_1, "%2.1f", state.temperature.means[1]);
   sprintf(string_mean_2, "%2.1f", state.temperature.means[2]);
-
-  /*
-  Serial.print("Latest temp means: ");
-  Serial.print(string_mean_0);
-  Serial.print(" ");
-  Serial.print(string_mean_1);
-  Serial.print(" ");
-  Serial.println(string_mean_2);
-  */
 
   sprintf(json,
     "{\
@@ -124,8 +130,7 @@ void handleTemperatureRequest (AsyncWebServerRequest *request) {
     state.temperature.threshold,
     state.temperature.is_alarm ? "true" : "false"
   );
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -163,7 +168,6 @@ void handleHumidityRequest (AsyncWebServerRequest *request) {
     state.humidity.is_alarm ? "true" : "false"
   );
 
-  // server.send(200, "application/json", json);
   request->send(200, "application/json", json);
 }
 
@@ -177,12 +181,14 @@ void handleChangeTemperatureRate (AsyncWebServerRequest *request) {
     task_temperature->schedule_ticks = new_rate*10;
     
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_rate);
+
+    String log_string = "Changed temperature rate to " + (String)new_rate;
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   } else {
     int seconds = task_temperature->schedule_ticks / 10;
     sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", seconds);
   }
 
-  // server.send(200, "application/json", json);
   request->send(200, "application/json", json);
 }
 
@@ -195,12 +201,14 @@ void handleChangeHumidityRate (AsyncWebServerRequest *request) {
     task_humidity->schedule_ticks = new_rate*10;
     
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_rate);
+    
+    String log_string = "Changed humidity rate to " + (String)new_rate;
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   } else {
     int seconds = task_humidity->schedule_ticks / 10;
     sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", seconds);
   }
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -214,12 +222,14 @@ void handleChangeTemperatureThreshold (AsyncWebServerRequest *request) {
     state.temperature.threshold = new_threshold;
     
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
+
+    String log_string = "Changed temperature threshold to " + (String)new_threshold;
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   } else {
     int threshold = (int) state.temperature.threshold;
     sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", threshold);
   }
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -232,12 +242,14 @@ void handleChangeHumidityThreshold (AsyncWebServerRequest *request) {
     state.humidity.threshold = new_threshold;
     
     sprintf(json, "{ \"success\": true, \"value\": %d }", new_threshold);
+
+    String log_string = "Changed humidity threshold to " + (String)new_threshold;
+    fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
   } else {
     int threshold = state.humidity.threshold;
     sprintf(json, "{ \"success\": false, \"value\": %d, \"message\": \"The 'value' parameter is missing from the request.\" }", threshold);
   }
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -249,8 +261,7 @@ void handleClockGet (AsyncWebServerRequest *request) {
   int minute = state.time_clock.tm_min;
   
   sprintf(json, "{ \"hour\": \"%02d\", \"minute\": \"%02d\" }", hour, minute);
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -273,8 +284,7 @@ void handleClockSet (AsyncWebServerRequest *request) {
     int minute = state.time_clock.tm_min;
     sprintf(json, "{ \"success\": false, \"value\": { \"hour\": \"%02d\", \"minute\": \"%02d\" }, \"message\": \"The 'hour' and/or 'minute' parameters are missing from the request.\" }", hour, minute);
   }
-
-  // server.send(200, "application/json", json);
+  
   request->send(200, "application/json", json);
 }
 
@@ -300,18 +310,12 @@ void handleFilesGetAll(AsyncWebServerRequest *request) {
       strcat(json, ",");
     }
     count++;
-
-    // Serial.print("File found: ");
-    // Serial.print(filename);
-    // Serial.print(" - Size: ");
-    // Serial.println (dir.fileSize());
-
+    
     sprintf(filename_char, "\"%s\"", filename.c_str());    
     strcat(json, filename_char);
   }
   strcat(json, "]");
-
-  // server.send(200, "application/json;charset=UTF-8", json);
+  
   request->send(200, "application/json;charset=UTF-8", json);
 }
 
@@ -394,7 +398,6 @@ void handleNotFound(AsyncWebServerRequest *request) {
     request->method() == HTTP_GET ? "GET" : "POST", // server.method() == HTTP_GET ? "GET" : "POST",
     request->headers() // server.args()
  );
-  
-  // server.send(404, "application/json", json);
+ 
   request->send(404, "application/json", json);
 }

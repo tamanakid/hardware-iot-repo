@@ -87,13 +87,13 @@ void humidityRecordsSetup() {
     char min_contents[50];
     sprintf(min_contents, fileRead(state.current_files.file_humi_min).c_str());
     
-    char *values = strtok(min_contents, " measured at ");
+    char *values = strtok(min_contents, "measured");
     state.humidity.record_min.value = atof(values);
     
     Serial.print("Min humidity value read from file: ");
     Serial.println(state.humidity.record_min.value);
 
-    values = strtok (NULL, " measured at ");
+    values = strtok (NULL, "measured");
     Serial.print("timestamp: ");
     sprintf(state.humidity.record_min.timestamp, values);
     Serial.println(state.humidity.record_min.timestamp);
@@ -103,13 +103,13 @@ void humidityRecordsSetup() {
     char max_contents[50];
     sprintf(max_contents, fileRead(state.current_files.file_humi_max).c_str());
     
-    char *values = strtok(max_contents, " measured at ");
+    char *values = strtok(max_contents, "measured");
     state.humidity.record_max.value = atof(values);
 
     Serial.print("Max humidity value read from file: ");
     Serial.println(state.humidity.record_max.value);
 
-    values = strtok (NULL, " measured at ");
+    values = strtok (NULL, "measured");
     Serial.print("timestamp: ");
     sprintf(state.humidity.record_max.timestamp, values);
     Serial.println(state.humidity.record_max.timestamp);
@@ -128,7 +128,7 @@ void humidityRecordsSync() {
     Serial.print("New min humidity value: ");
     Serial.println(state.humidity.record_min.value);
     
-    String file_contents = (String)state.humidity.record_min.value + " measured at " + state.humidity.record_min.timestamp;
+    String file_contents = (String)state.humidity.record_min.value + " measured " + state.humidity.record_min.timestamp;
     fileOverwrite(state.current_files.file_humi_min, file_contents);
     
     Serial.println("Content written to file");
@@ -141,7 +141,7 @@ void humidityRecordsSync() {
     Serial.print("New max humidity value: ");
     Serial.println(state.humidity.record_max.value);
     
-    String file_contents = (String)state.humidity.record_max.value + " measured at " + state.humidity.record_max.timestamp;
+    String file_contents = (String)state.humidity.record_max.value + " measured " + state.humidity.record_max.timestamp;
     fileOverwrite(state.current_files.file_humi_max, file_contents);
 
     Serial.println("Content written to file");

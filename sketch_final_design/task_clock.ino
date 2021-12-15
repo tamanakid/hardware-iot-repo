@@ -27,8 +27,11 @@ void updateNTP() {
     
     timestamp = ntpClient.getEpochTime();
     timestamp_struct = *localtime(&timestamp);
+
+    Serial.print("NTP fetch resulted in year: ");
+    Serial.println(timestamp_struct.tm_year);
     
-  } while (timestamp_struct.tm_year == 0);
+  } while (timestamp_struct.tm_year <= 100);
   
   state.is_ntp_updated = state.time_clock.tm_hour == timestamp_struct.tm_hour &&
                          state.time_clock.tm_min  == timestamp_struct.tm_min  &&

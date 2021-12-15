@@ -53,7 +53,13 @@ void taskWifiConnect() {
         updateScheduler(ACTION_ON_CONNECTED);
 
         if (!state.is_first_wifi_connect) {
-          String log_string = "Connected to WiFi."; // TODO: WiFi name?
+          IPAddress local_ip = WiFi.localIP();
+          String local_ip_string =
+            String(local_ip[0]) + String(".") +
+            String(local_ip[1]) + String(".") +
+            String(local_ip[2]) + String(".") +
+            String(local_ip[3]);
+          String log_string = "Connected to WiFi with IP " + local_ip_string;
           fileWriteWithTimestamp(state.current_files.file_log, log_string, &state.time_clock);
         }
         break;

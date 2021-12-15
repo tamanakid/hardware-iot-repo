@@ -1,130 +1,80 @@
-function onRequest(endpoint, headers, callback) {
-	function reqListener () {
-        if (headers.isPlainResponse) {
-            callback(this.responseText);
-        } else {
-            callback(JSON.parse(this.responseText));
+function onRequest(endpoint, headers) {
+
+    const promise = new Promise((resolve, reject) => {
+        function reqListener () {
+            if (headers.isPlainResponse) {
+                resolve(this.responseText);
+            } else {
+                resolve(JSON.parse(this.responseText.replace(/[\r\n]/g, '')));
+            }
+            // removeEventListener after callback?
         }
-		// removeEventListener after callback?
-	}
-	
-	var oReq = new XMLHttpRequest();
-	oReq.addEventListener("load", reqListener);
-	oReq.open(headers.method, endpoint);
-    // if (headers.params) {
-    //     oReq.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    // }
-    if (headers.params) {
-        headers.params.forEach(param => {
-            oReq.setRequestHeader(param.key, param.value);
-        });
-    }
-    oReq.send(headers.params || null);
+        
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", reqListener);
+        oReq.open(headers.method, endpoint);
+        if (headers.params) {
+            headers.params.forEach(param => {
+                oReq.setRequestHeader(param.key, param.value);
+            });
+        }
+        oReq.send(headers.params || null);
+    })
+
+	return promise;
 }
 
 
 function getMeasurementValues (tab) {
     const endpointUrl = `/api/${tab}`;
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "GET" });
 }
 
 function changeConfig (tab, configField, params) {
     const endpointUrl = `/api/${tab}/${configField}`;
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "POST", params }, function (response) {
-			resolve(response);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "POST", params });
 }
 
 /** Clock endpoints */
 
 function getClock () {
     const endpointUrl = '/api/clock/get';
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "GET" });
 }
 
 function setClock (params) {
     const endpointUrl = '/api/clock/set';
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "POST", params }, function (response) {
-			resolve(response.value);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "POST", params });
 }
 
 function getBatteryLevel () {
     const endpointUrl = '/api/battery';
+    return onRequest(endpointUrl, { method: "GET" });
+}
 
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response.value);
-		});
-	});
-
-	return promise;
+function getPageInit () {
+    const endpointUrl = '/api/init';
+    return onRequest(endpointUrl, { method: "GET" });
 }
 
 /** Storage endpoints */
 
 function getAllFilesFromStorage () {
-	// const endpointUrl = '/storage';
     const endpointUrl = '/api/files/all';
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "GET" });
 }
 
 function getFileFromStorage (filename) {
 	const endpointUrl = `/api/files/get`;
-    // const params = `filename=${filename}`;
     const params = [{ key: 'filename', value: filename }]
     const isPlainResponse = true;
 
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "POST", params, isPlainResponse }, function (response) {
-			resolve(response);
-		});
-	});
-
-	return promise;
+    return onRequest(endpointUrl, { method: "POST", params, isPlainResponse });
 }
 
 async function deleteFlash () {
 	const endpointUrl = `/api/files/delete`;
-
-	const promise = new Promise((resolve, reject) => {
-		onRequest(endpointUrl, { method: "GET" }, function (response) {
-			resolve(response);
-		});
-	});
-
-    return promise;
+    return onRequest(endpointUrl, { method: "GET" });
 }
 
 
@@ -134,6 +84,7 @@ const endpoints = {
     getClock,
     setClock,
     getBatteryLevel,
+    getPageInit,
 	getAllFilesFromStorage,
 	getFileFromStorage,
 	deleteFlash,
@@ -276,17 +227,18 @@ renderMeasurementValues('humi');
 async function onSubmitConfig (tab, configField) {
     const rateSelector = document.getElementById(`config_${tab}_${configField}`);
     // const params = `value=${rateSelector.value}`;
-    const params = [{ key: 'value', value: rateSelector.value }];
 
     // Validate Threshold
+    let value = Number(rateSelector.value);
     if (configField === 'thres') {
-        const value = Number(rateSelector.value);
+        value = (tab === 'temp' && configField === 'thres') ? onDeconvertTemperature(value, currentTempUnits) : value;
         if (!value || value < 0 || value > 100) {
-            alert('Value must be between 0 and 100');
+            alert('Value must be between 0 and 100 ºC (32 and 212 in ºF -- 273.2 and 373.2 in K)');
             return;
         }
     }
 
+    const params = [{ key: 'value', value }];
     const response = await endpoints.changeConfig(tab, configField, params);
 
     if (response.success) {
@@ -331,7 +283,7 @@ async function onSubmitClock () {
         { key: 'hour', value: clockHourInput.value },
         { key: 'minute', value: clockMinuteInput.value },
     ];
-    const value = await endpoints.setClock(params);
+    const { value } = await endpoints.setClock(params);
     clockValueEl.innerHTML = `${value.hour}:${value.minute}`;
     clockHourInput.value = `${value.hour}`;
     clockMinuteInput.value = `${value.minute}`;
@@ -421,13 +373,19 @@ tempUnitsSelect.addEventListener('change', onChangeTemperatureUnits);
 const batteryValueEl = document.getElementById('battery_value');
 
 async function onGetBatteryLevel () {
-    const value = await endpoints.getBatteryLevel();
+    const { value } = await endpoints.getBatteryLevel();
     batteryValueEl.innerHTML = value;
 }
 
 onGetBatteryLevel();
 setInterval(onGetBatteryLevel, 20000);
 
+
+
+async function onGetPageInit () {
+    await endpoints.getPageInit();
+}
+onGetPageInit();
 
 
 

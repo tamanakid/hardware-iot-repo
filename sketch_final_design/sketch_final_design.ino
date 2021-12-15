@@ -115,7 +115,7 @@ void setup() {
 
 void loop() {
   scheduler_run();
-  delay(85);
+  delay(80);
 }
 
 

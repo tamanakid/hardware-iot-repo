@@ -91,13 +91,13 @@ void temperatureRecordsSetup() {
     char min_contents[50];
     sprintf(min_contents, fileRead(state.current_files.file_temp_min).c_str());
     
-    char *values = strtok(min_contents, " measured at ");
+    char *values = strtok(min_contents, "measured");
     state.temperature.record_min.value = atof(values);
 
     Serial.print("Min temperature value read from file: ");
     Serial.println(state.temperature.record_min.value);
 
-    values = strtok (NULL, " measured at ");
+    values = strtok (NULL, "measured");
     Serial.print("timestamp: ");
     sprintf(state.temperature.record_min.timestamp, values);
     Serial.println(state.temperature.record_min.timestamp);
@@ -107,13 +107,13 @@ void temperatureRecordsSetup() {
     char max_contents[50];
     sprintf(max_contents, fileRead(state.current_files.file_temp_max).c_str());
     
-    char *values = strtok(max_contents, " measured at ");
+    char *values = strtok(max_contents, "measured");
     state.temperature.record_max.value = atof(values);
     
     Serial.print("Max temperature value read from file: ");
     Serial.println(state.temperature.record_max.value);
 
-    values = strtok (NULL, " measured at ");
+    values = strtok (NULL, "measured");
     Serial.print("timestamp: ");
     sprintf(state.temperature.record_max.timestamp, values);
     Serial.println(state.temperature.record_max.timestamp);
@@ -132,7 +132,7 @@ void temperatureRecordsSync() {
     Serial.print("New min temperature value: ");
     Serial.println(state.temperature.record_min.value);
     
-    String file_contents = (String)state.temperature.record_min.value + " measured at " + state.temperature.record_min.timestamp;
+    String file_contents = (String)state.temperature.record_min.value + " measured " + state.temperature.record_min.timestamp;
     fileOverwrite(state.current_files.file_temp_min, file_contents);
     
     Serial.println("Content written to file");
@@ -145,7 +145,7 @@ void temperatureRecordsSync() {
     Serial.print("New max temperature value: ");
     Serial.println(state.temperature.record_max.value);
     
-    String file_contents = (String)state.temperature.record_max.value + " measured at " + state.temperature.record_max.timestamp;
+    String file_contents = (String)state.temperature.record_max.value + " measured " + state.temperature.record_max.timestamp;
     fileOverwrite(state.current_files.file_temp_max, file_contents);
 
     Serial.println("Content written to file");
